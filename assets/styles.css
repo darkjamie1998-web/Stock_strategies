@@ -1,0 +1,225 @@
+/* 三维共振+1020双线交易策略 - 深色主题样式 */
+
+body {
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.dash-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.module-card {
+    background-color: #16213e;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.module-card:hover {
+    border-color: #4a90e2;
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.module-title {
+    color: #4a90e2;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #4a90e2;
+}
+
+.control-group {
+    margin-bottom: 15px;
+}
+
+.control-label {
+    color: #a0aec0;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1a1a2e;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4a90e2;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #667eea;
+}
+
+/* 信号结果区域的滚动条样式 */
+#signal-result::-webkit-scrollbar {
+    width: 6px;
+}
+
+#signal-result::-webkit-scrollbar-track {
+    background: #2d3748;
+    border-radius: 3px;
+}
+
+#signal-result::-webkit-scrollbar-thumb {
+    background: #4a90e2;
+    border-radius: 3px;
+}
+
+#signal-result::-webkit-scrollbar-thumb:hover {
+    background: #667eea;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f6ad55 0%, #f0932b 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(246, 173, 85, 0.4);
+}
+
+.result-box {
+    background-color: #1a1a2e;
+    border: 1px solid #4a90e2;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.score-display {
+    font-size: 24px;
+    font-weight: bold;
+    color: #48bb78;
+    text-align: center;
+    padding: 10px;
+}
+
+.signal-item {
+    background-color: #2d3748;
+    border-left: 4px solid #4a90e2;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.signal-buy {
+    border-left-color: #f56565;
+}
+
+.signal-add {
+    border-left-color: #f6ad55;
+}
+
+.signal-sell {
+    border-left-color: #48bb78;
+}
+
+/* 下拉菜单样式 - 黑色字体 */
+.Select-control {
+    background-color: #ffffff !important;
+    border: 1px solid #2d3748;
+    border-radius: 4px;
+}
+
+.Select-value {
+    color: #000000 !important;
+}
+
+.Select-placeholder {
+    color: #000000 !important;
+}
+
+.Select-menu {
+    background-color: #ffffff !important;
+    border: 1px solid #2d3748;
+    border-radius: 4px;
+}
+
+.Select-option {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.Select-option:hover {
+    background-color: #f0f0f0;
+    color: #000000;
+}
+
+.Select-option.is-selected {
+    background-color: #4a90e2;
+    color: #ffffff;
+}
+
+.Select-option.is-focused {
+    background-color: #e0e0e0;
+    color: #000000;
+}

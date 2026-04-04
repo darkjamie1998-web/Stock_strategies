@@ -1,0 +1,27 @@
+# Web Framework
+dash==2.14.2
+dash-bootstrap-components==1.5.0
+
+# Data Processing
+pandas==2.1.4
+numpy==1.26.3
+
+# Visualization
+plotly==5.18.0
+
+# Data Source
+tushare==1.2.89
+
+# Utilities
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# Development
+pytest==7.4.3
+pytest-cov==4.1.0
+black==23.12.1
+flake8==7.0.0
+mypy==1.8.0
+
+# Logging
+colorlog==6.8.0

@@ -1,0 +1,325 @@
+2026-04-04 10:37:31 - root - INFO - ==================================================
+2026-04-04 10:37:31 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:37:31 - root - INFO - ==================================================
+2026-04-04 10:37:31 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:37:31 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:37:31 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:37:32 - root - INFO - ==================================================
+2026-04-04 10:37:32 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:37:32 - root - INFO - ==================================================
+2026-04-04 10:37:32 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:37:32 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:39:38 - root - INFO - ==================================================
+2026-04-04 10:39:38 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:39:38 - root - INFO - ==================================================
+2026-04-04 10:39:38 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:39:38 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:39:38 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:39:39 - root - INFO - ==================================================
+2026-04-04 10:39:39 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:39:39 - root - INFO - ==================================================
+2026-04-04 10:39:39 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:39:39 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:40:32 - root - INFO - ==================================================
+2026-04-04 10:40:32 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:40:32 - root - INFO - ==================================================
+2026-04-04 10:40:32 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:40:32 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:40:32 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:40:33 - root - INFO - ==================================================
+2026-04-04 10:40:33 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:40:33 - root - INFO - ==================================================
+2026-04-04 10:40:33 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:40:33 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:41:22 - root - INFO - ==================================================
+2026-04-04 10:41:22 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:41:22 - root - INFO - ==================================================
+2026-04-04 10:41:23 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:41:23 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:41:23 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:41:23 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:41:23 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:41:24 - root - INFO - ==================================================
+2026-04-04 10:41:24 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:41:24 - root - INFO - ==================================================
+2026-04-04 10:41:24 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:41:24 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:41:24 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:41:24 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:44:18 - root - INFO - ==================================================
+2026-04-04 10:44:18 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:44:18 - root - INFO - ==================================================
+2026-04-04 10:44:18 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:44:18 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:44:18 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:44:18 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:44:18 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:44:19 - root - INFO - ==================================================
+2026-04-04 10:44:19 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:44:19 - root - INFO - ==================================================
+2026-04-04 10:44:19 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:44:19 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:44:19 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:44:19 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:46:15 - root - INFO - ==================================================
+2026-04-04 10:46:15 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:46:15 - root - INFO - ==================================================
+2026-04-04 10:46:15 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:46:15 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:46:15 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:46:15 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:46:40 - root - INFO - ==================================================
+2026-04-04 10:46:40 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:46:40 - root - INFO - ==================================================
+2026-04-04 10:46:40 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:46:40 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:46:40 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:46:40 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:47:58 - root - INFO - ==================================================
+2026-04-04 10:47:58 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:47:58 - root - INFO - ==================================================
+2026-04-04 10:47:58 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:47:58 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:47:58 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:47:58 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:47:58 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:47:58 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:47:59 - root - INFO - ==================================================
+2026-04-04 10:47:59 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:47:59 - root - INFO - ==================================================
+2026-04-04 10:47:59 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:47:59 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:47:59 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:47:59 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:47:59 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:49:39 - root - INFO - ==================================================
+2026-04-04 10:49:39 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:49:39 - root - INFO - ==================================================
+2026-04-04 10:49:39 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:49:39 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:49:39 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:49:39 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:49:39 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:49:39 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:49:40 - root - INFO - ==================================================
+2026-04-04 10:49:40 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:49:40 - root - INFO - ==================================================
+2026-04-04 10:49:40 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:49:40 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:49:40 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:49:40 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:49:40 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:51:08 - root - INFO - ==================================================
+2026-04-04 10:51:08 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:51:08 - root - INFO - ==================================================
+2026-04-04 10:51:08 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:51:08 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:51:08 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:51:08 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:51:08 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:51:08 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:51:08 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:51:09 - root - INFO - ==================================================
+2026-04-04 10:51:09 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:51:09 - root - INFO - ==================================================
+2026-04-04 10:51:09 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:51:09 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:51:09 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:51:09 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:51:09 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:51:09 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:51:54 - root - INFO - ==================================================
+2026-04-04 10:51:54 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:51:54 - root - INFO - ==================================================
+2026-04-04 10:51:54 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:51:54 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:51:54 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:51:54 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:51:54 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:51:54 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:51:54 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:51:55 - root - INFO - ==================================================
+2026-04-04 10:51:55 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:51:55 - root - INFO - ==================================================
+2026-04-04 10:51:55 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:51:55 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:51:55 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:51:55 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:51:55 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:51:55 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:52:20 - root - INFO - ==================================================
+2026-04-04 10:52:20 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:52:20 - root - INFO - ==================================================
+2026-04-04 10:52:21 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:52:21 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:52:21 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:52:21 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:52:21 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:52:21 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:52:45 - root - INFO - ==================================================
+2026-04-04 10:52:45 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:52:45 - root - INFO - ==================================================
+2026-04-04 10:52:45 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:52:45 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:52:45 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:52:45 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:52:45 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:52:45 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:53:35 - root - INFO - ==================================================
+2026-04-04 10:53:35 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:53:35 - root - INFO - ==================================================
+2026-04-04 10:53:35 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:53:35 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:53:35 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:53:35 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:53:35 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:53:35 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:53:35 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:53:36 - root - INFO - ==================================================
+2026-04-04 10:53:36 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:53:36 - root - INFO - ==================================================
+2026-04-04 10:53:36 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:53:36 - views.app_view - INFO - Initial stocks for layout: 100 items
+2026-04-04 10:53:36 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:53:36 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:53:36 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:53:36 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:54:33 - root - INFO - ==================================================
+2026-04-04 10:54:33 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:54:33 - root - INFO - ==================================================
+2026-04-04 10:54:33 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:54:33 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:54:33 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:54:33 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:54:33 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:54:33 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:54:34 - root - INFO - ==================================================
+2026-04-04 10:54:34 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:54:34 - root - INFO - ==================================================
+2026-04-04 10:54:34 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:54:34 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:54:34 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:54:34 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:54:34 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:55:41 - root - INFO - ==================================================
+2026-04-04 10:55:41 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:55:41 - root - INFO - ==================================================
+2026-04-04 10:55:41 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:55:41 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:55:41 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:55:41 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:55:41 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:55:41 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:55:42 - root - INFO - ==================================================
+2026-04-04 10:55:42 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:55:42 - root - INFO - ==================================================
+2026-04-04 10:55:42 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:55:42 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:55:42 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:55:42 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:55:42 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:56:37 - root - INFO - ==================================================
+2026-04-04 10:56:37 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:56:37 - root - INFO - ==================================================
+2026-04-04 10:56:37 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:56:37 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:56:37 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:56:37 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:56:37 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:56:37 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:56:38 - root - INFO - ==================================================
+2026-04-04 10:56:38 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:56:38 - root - INFO - ==================================================
+2026-04-04 10:56:38 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:56:38 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:56:38 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:56:38 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:56:38 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:58:31 - root - INFO - ==================================================
+2026-04-04 10:58:31 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:58:31 - root - INFO - ==================================================
+2026-04-04 10:58:31 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:58:31 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:58:31 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:58:31 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:58:31 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:58:31 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 10:58:32 - root - INFO - ==================================================
+2026-04-04 10:58:32 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:58:32 - root - INFO - ==================================================
+2026-04-04 10:58:32 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:58:32 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:58:32 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:58:32 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:58:32 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 10:59:29 - root - INFO - ==================================================
+2026-04-04 10:59:29 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 10:59:29 - root - INFO - ==================================================
+2026-04-04 10:59:29 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 10:59:29 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 10:59:29 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 10:59:29 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 10:59:29 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 11:00:04 - root - INFO - ==================================================
+2026-04-04 11:00:04 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 11:00:04 - root - INFO - ==================================================
+2026-04-04 11:00:04 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 11:00:04 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 11:00:04 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 11:00:04 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 11:00:04 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 11:00:46 - root - INFO - ==================================================
+2026-04-04 11:00:46 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 11:00:46 - root - INFO - ==================================================
+2026-04-04 11:00:46 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 11:00:46 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 11:00:46 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 11:00:46 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 11:00:46 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 11:00:46 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 11:00:47 - root - INFO - ==================================================
+2026-04-04 11:00:47 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 11:00:47 - root - INFO - ==================================================
+2026-04-04 11:00:47 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 11:00:47 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 11:00:47 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 11:00:47 - views.app_view - INFO - Dropdown options set: 100 items
+2026-04-04 11:00:47 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 11:01:36 - root - INFO - ==================================================
+2026-04-04 11:01:36 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 11:01:36 - root - INFO - ==================================================
+2026-04-04 11:01:36 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 11:01:36 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 11:01:36 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 11:01:36 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 11:01:46 - root - INFO - ==================================================
+2026-04-04 11:01:46 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 11:01:46 - root - INFO - ==================================================
+2026-04-04 11:01:46 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 11:01:46 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 11:01:46 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 11:01:46 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 11:01:46 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 11:01:47 - root - INFO - ==================================================
+2026-04-04 11:01:47 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 11:01:47 - root - INFO - ==================================================
+2026-04-04 11:01:47 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 11:01:47 - views.app_view - INFO - Initial stocks loaded: 100 items
+2026-04-04 11:01:47 - views.app_view - INFO - First stock: {'label': '000001.SZ 平安银行', 'value': '000001.SZ'}
+2026-04-04 11:01:47 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050

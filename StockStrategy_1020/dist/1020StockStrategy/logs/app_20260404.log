@@ -1,0 +1,33 @@
+2026-04-04 16:32:48 - root - INFO - ==================================================
+2026-04-04 16:32:48 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 16:32:48 - root - INFO - ==================================================
+2026-04-04 16:32:48 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 16:32:48 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 16:32:48 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 16:32:49 - root - INFO - ==================================================
+2026-04-04 16:32:49 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 16:32:49 - root - INFO - ==================================================
+2026-04-04 16:32:49 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 16:32:49 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 16:32:59 - services.strategy_service - INFO - 策略配置已更新: {'ma_short': 10, 'ma_long': 20, 'volume_threshold': 0.2, 'stop_loss_threshold': 0.05, 'take_profit_threshold': 0.05, 'pullback_threshold': 0.02, 'signal_window': 10}
+2026-04-04 16:32:59 - services.data_service - INFO - 从文件加载股票数据: 000001.SZ
+2026-04-04 16:32:59 - services.strategy_service - INFO - 分析完成，生成 11 个信号
+2026-04-04 16:34:40 - root - INFO - ==================================================
+2026-04-04 16:34:40 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 16:34:40 - root - INFO - ==================================================
+2026-04-04 16:34:40 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 16:34:41 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 16:34:41 - dash.dash - INFO - Dash is running on http://127.0.0.1:8050/
+
+2026-04-04 16:34:41 - root - INFO - ==================================================
+2026-04-04 16:34:41 - root - INFO - 启动 1020双均线交易策略应用
+2026-04-04 16:34:41 - root - INFO - ==================================================
+2026-04-04 16:34:41 - services.data_service - INFO - 加载了 5191 只股票
+2026-04-04 16:34:41 - root - INFO - 应用启动成功，访问 http://127.0.0.1:8050
+2026-04-04 16:34:49 - services.strategy_service - INFO - 策略配置已更新: {'ma_short': 10, 'ma_long': 20, 'volume_threshold': 0.2, 'stop_loss_threshold': 0.05, 'take_profit_threshold': 0.05, 'pullback_threshold': 0.02, 'signal_window': 10}
+2026-04-04 16:34:49 - services.data_service - INFO - 从文件加载股票数据: 000001.SZ
+2026-04-04 16:34:50 - services.strategy_service - INFO - 分析完成，生成 11 个信号
+2026-04-04 16:34:56 - services.strategy_service - INFO - 策略配置已更新: {'ma_short': 10, 'ma_long': 20, 'volume_threshold': 0.2, 'stop_loss_threshold': 0.05, 'take_profit_threshold': 0.05, 'pullback_threshold': 0.02, 'signal_window': 10}
+2026-04-04 16:34:56 - services.data_service - INFO - 从文件加载股票数据: 000004.SZ
+2026-04-04 16:34:56 - services.strategy_service - INFO - 分析完成，生成 11 个信号

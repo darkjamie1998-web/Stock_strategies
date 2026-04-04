@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三维共振打分系统 - 高志强工作室</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: none;
+            margin-top: 15px;
+            color: #667eea;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        .score-display {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .score-number {
+            font-size: 4em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .score-label {
+            font-size: 1.2em;
+            color: #666;
+        }
+        
+        .market-status {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .status-up {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-neutral {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-down {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .position-suggestion {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-top: 15px;
+        }
+        
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .dimension-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .dimension-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .dimension-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+        }
+        
+        .icon-policy { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .icon-capital { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .icon-technical { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        
+        .dimension-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .score-1 { color: #28a745; }
+        .score-0 { color: #dc3545; }
+        
+        .dimension-name {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .dimension-analysis {
+            font-size: 0.9em;
+            color: #888;
+            line-height: 1.5;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .chart-container h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        #klineChart {
+            width: 100%;
+            height: 650px;
+        }
+        
+        .chart-fullwidth {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 100%;
+            overflow: visible;
+        }
+        
+        #klineChartWrapper {
+            width: 100%;
+            height: 650px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #klineChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        .chart-fullwidth h3 {
+            color: #333;
+            font-size: 1.3em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .details-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .details-panel h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        .detail-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .detail-content {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .timestamp {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .dimensions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>三维共振打分系统</h1>
+            <p>高志强工作室专属 - 大盘趋势判断工具</p>
+        </div>
+        
+        <div class="control-panel">
+            <button class="btn" id="analyzeBtn" onclick="startAnalysis()">
+                开始三维共振分析
+            </button>
+            <div class="loading" id="loading">
+                正在分析中，请稍候...（政策面分析可能需要30-60秒）
+            </div>
+        </div>
+        
+        <div id="results" class="hidden">
+            <div class="dimensions-grid">
+                <div class="dimension-card">
+                    <div class="dimension-icon icon-policy">政</div>
+                    <div class="dimension-name">政策面</div>
+                    <div class="dimension-score" id="policyScore">-</div>
+                    <div class="dimension-analysis" id="policyAnalysis">点击开始分析</div>
+                </div>
+                
+                <div class="dimension-card">
+                    <div class="dimension-icon icon-capital">资</div>
+                    <div class="dimension-name">资金面</div>
+                    <div class="dimension-score" id="capitalScore">-</div>
+                    <div class="dimension-analysis" id="capitalAnalysis">点击开始分析</div>
+                </div>
+                
+                <div class="dimension-card">
+                    <div class="dimension-icon icon-technical">技</div>
+                    <div class="dimension-name">技术面</div>
+                    <div class="dimension-score" id="technicalScore">-</div>
+                    <div class="dimension-analysis" id="technicalAnalysis">点击开始分析</div>
+                </div>
+            </div>
+            
+            <div class="dashboard">
+                <div class="card">
+                    <h3>综合评分</h3>
+                    <div class="score-display">
+                        <div class="score-label">三维共振得分</div>
+                        <div class="score-number" id="totalScore">0/3</div>
+                        <div class="score-label">满分3分</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3>市场状态判断</h3>
+                    <div class="market-status">
+                        <div class="status-badge" id="marketStatus">等待分析</div>
+                        <div class="position-suggestion" id="positionSuggestion">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-fullwidth">
+                <h3 style="padding: 20px 20px 0 20px;">中证全指K线图与成交量（近3个月）</h3>
+                <div id="klineChartWrapper" style="width: 100%; height: 650px; position: relative;">
+                    <div id="klineChart" style="width: 100%; height: 100%;"></div>
+                </div>
+            </div>
+            
+            <div class="details-panel">
+                <h3>详细分析</h3>
+                <div id="detailsContent">
+                    <div class="detail-item">
+                        <div class="detail-title">政策面分析</div>
+                        <div class="detail-content" id="policyDetail">等待分析...</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-title">资金面分析</div>
+                        <div class="detail-content" id="capitalDetail">等待分析...</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-title">技术面分析</div>
+                        <div class="detail-content" id="technicalDetail">等待分析...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="timestamp" id="timestamp"></div>
+    </div>
+
+    <script>
+        let klineChart = null;
+        
+        // 初始化图表
+        function initCharts() {
+            const chartDom = document.getElementById('klineChart');
+            
+            // 先设置容器的明确尺寸
+            if (chartDom) {
+                chartDom.style.width = '100%';
+                chartDom.style.height = '650px';
+            }
+            
+            klineChart = echarts.init(chartDom, null, {
+                renderer: 'canvas'
+            });
+            
+            // 初始化后立即调整大小
+            setTimeout(() => {
+                if (klineChart) {
+                    klineChart.resize();
+                }
+            }, 100);
+        }
+        
+        // 获取并显示 K 线数据
+        async function loadKlineData() {
+            try {
+                const response = await fetch('/api/kline');
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayCombinedChart(result.data);
+                } else {
+                    console.error('获取 K 线数据失败:', result.error);
+                }
+            } catch (error) {
+                console.error('获取 K 线数据失败:', error);
+            }
+        }
+        
+        // 显示K线和成交量合并图
+        function displayCombinedChart(data) {
+            // 计算成交量颜色（涨红跌绿）
+            const volumeColors = data.kline.map(k => k[1] >= k[0] ? '#ef5350' : '#26a69a');
+            
+            const option = {
+                animation: false,
+                tooltip: {
+                    trigger: 'axis',
+                    triggerOn: 'mousemove',
+                    axisPointer: {
+                        type: 'cross',
+                        hideDelay: 200,
+                        animation: false
+                    },
+                    enterable: false,
+                    showDelay: 0,
+                    hideDelay: 200,
+                    transitionDuration: 0,
+                    confine: true,
+                    appendToBody: true,
+                    formatter: function (params) {
+                        let html = params[0].name + '<br/>';
+                        // K线数据
+                        const kline = params.find(p => p.seriesName === 'K线');
+                        const ma10 = params.find(p => p.seriesName === 'MA10');
+                        const ma20 = params.find(p => p.seriesName === 'MA20');
+                        const volume = params.find(p => p.seriesName === '成交量');
+                        
+                        if (kline) {
+                            html += '开盘: ' + kline.data[1] + '<br/>';
+                            html += '收盘: ' + kline.data[2] + '<br/>';
+                            html += '最低: ' + kline.data[3] + '<br/>';
+                            html += '最高: ' + kline.data[4] + '<br/>';
+                        }
+                        if (ma10 && ma10.data) html += 'MA10: ' + ma10.data.toFixed(2) + '<br/>';
+                        if (ma20 && ma20.data) html += 'MA20: ' + ma20.data.toFixed(2) + '<br/>';
+                        if (volume && volume.data) {
+                            const volumeValue = typeof volume.data === 'object' ? volume.data.value : volume.data;
+                            html += '成交量: ' + Number(volumeValue).toFixed(2) + '亿<br/>';
+                        }
+                        return html;
+                    }
+                },
+                legend: {
+                    data: ['K线', 'MA10', 'MA20', '成交量'],
+                    top: 10,
+                    left: 'center'
+                },
+                grid: [
+                    {
+                        left: '3%',
+                        right: '3%',
+                        top: '50',
+                        bottom: '100',
+                        containLabel: false
+                    },
+                    {
+                        left: '3%',
+                        right: '3%',
+                        top: '85%',
+                        bottom: '30',
+                        containLabel: false
+                    }
+                ],
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: data.dates,
+                        scale: true,
+                        boundaryGap: false,
+                        axisLine: { onZero: false },
+                        splitLine: { show: false },
+                        axisLabel: { show: false },
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    },
+                    {
+                        type: 'category',
+                        gridIndex: 1,
+                        data: data.dates,
+                        scale: true,
+                        boundaryGap: false,
+                        axisLine: { onZero: false },
+                        axisTick: { show: false },
+                        splitLine: { show: false },
+                        axisLabel: {
+                            formatter: function (value) {
+                                return value.substring(5);
+                            }
+                        },
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    }
+                ],
+                yAxis: [
+                    {
+                        scale: true,
+                        splitArea: { show: true }
+                    },
+                    {
+                        scale: true,
+                        gridIndex: 1,
+                        splitNumber: 2,
+                        axisLabel: { show: false },
+                        axisLine: { show: false },
+                        axisTick: { show: false },
+                        splitLine: { show: false }
+                    }
+                ],
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        xAxisIndex: [0, 1],
+                        start: 50,
+                        end: 100
+                    },
+                    {
+                        show: true,
+                        xAxisIndex: [0, 1],
+                        type: 'slider',
+                        top: '95%',
+                        start: 50,
+                        end: 100,
+                        height: 20
+                    }
+                ],
+                series: [
+                    {
+                        name: 'K线',
+                        type: 'candlestick',
+                        data: data.kline,
+                        itemStyle: {
+                            color: '#ef5350',
+                            color0: '#26a69a',
+                            borderColor: '#ef5350',
+                            borderColor0: '#26a69a'
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: data.ma10,
+                        smooth: true,
+                        lineStyle: {
+                            color: '#2196F3',
+                            width: 2
+                        },
+                        symbol: 'none'
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: data.ma20,
+                        smooth: true,
+                        lineStyle: {
+                            color: '#FF9800',
+                            width: 2
+                        },
+                        symbol: 'none'
+                    },
+                    {
+                        name: '成交量',
+                        type: 'bar',
+                        xAxisIndex: 1,
+                        yAxisIndex: 1,
+                        data: data.volume.map((v, i) => ({
+                            value: v,
+                            itemStyle: {
+                                color: volumeColors[i]
+                            }
+                        })),
+                        barWidth: '60%'
+                    }
+                ]
+            };
+            
+            klineChart.setOption(option);
+            
+            // 设置选项后立即调整大小
+            setTimeout(() => {
+                if (klineChart) {
+                    klineChart.resize();
+                }
+            }, 100);
+        }
+        
+        // 开始分析
+        async function startAnalysis() {
+            const btn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            
+            btn.disabled = true;
+            loading.classList.add('active');
+            
+            try {
+                // 同时加载K线数据和三维共振分析
+                await Promise.all([
+                    loadKlineData(),
+                    (async () => {
+                        const response = await fetch('/api/analyze', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            displayResults(result.data);
+                            results.classList.remove('hidden');
+                        } else {
+                            alert('分析失败: ' + result.error);
+                        }
+                    })()
+                ]);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('请求失败，请检查网络连接');
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('active');
+            }
+        }
+        
+        // 显示分析结果
+        function displayResults(data) {
+            const dimensions = data.dimensions;
+            const summary = data.summary;
+            
+            // 更新各维度得分
+            dimensions.forEach(dim => {
+                const scoreEl = document.getElementById(dim.dimension === '政策面' ? 'policyScore' : 
+                                                       dim.dimension === '资金面' ? 'capitalScore' : 'technicalScore');
+                const analysisEl = document.getElementById(dim.dimension === '政策面' ? 'policyAnalysis' : 
+                                                           dim.dimension === '资金面' ? 'capitalAnalysis' : 'technicalAnalysis');
+                
+                scoreEl.textContent = dim.score + '/1';
+                scoreEl.className = 'dimension-score ' + (dim.score === 1 ? 'score-1' : 'score-0');
+                
+                // 政策面特殊处理：只显示score_reason
+                if (dim.dimension === '政策面') {
+                    let analysisObj = dim.analysis;
+                    
+                    // 如果是字符串，尝试解析为JSON
+                    if (typeof analysisObj === 'string') {
+                        try {
+                            analysisObj = JSON.parse(analysisObj);
+                        } catch (e) {
+                            // 解析失败，使用原字符串
+                        }
+                    }
+                    
+                    // 提取score_reason
+                    if (typeof analysisObj === 'object' && analysisObj.score_reason) {
+                        analysisEl.textContent = analysisObj.score_reason;
+                    } else if (typeof analysisObj === 'object' && analysisObj.text) {
+                        analysisEl.textContent = analysisObj.text;
+                    } else if (typeof analysisObj === 'object') {
+                        // 如果是对象但没有score_reason，尝试提取policy_analysis或转为字符串
+                        if (analysisObj.policy_analysis) {
+                            analysisEl.textContent = analysisObj.policy_analysis;
+                        } else {
+                            analysisEl.textContent = JSON.stringify(analysisObj);
+                        }
+                    } else {
+                        analysisEl.textContent = analysisObj;
+                    }
+                } else {
+                    analysisEl.textContent = dim.analysis;
+                }
+            });
+            
+            // 更新总分
+            document.getElementById('totalScore').textContent = summary.total_score + '/3';
+            
+            // 更新市场状态
+            const statusEl = document.getElementById('marketStatus');
+            statusEl.textContent = summary.market_status;
+            statusEl.className = 'status-badge ' + 
+                (summary.total_score === 3 ? 'status-up' : 
+                 summary.total_score === 2 ? 'status-neutral' : 'status-down');
+            
+            // 更新仓位建议
+            document.getElementById('positionSuggestion').textContent = 
+                '建议仓位: ' + summary.position_suggestion;
+            
+            // 更新详细分析
+            // 政策面：展示分析正文和得分
+            const policyResult = dimensions[0];
+            let policyText = '';
+            
+            // 尝试从analysis对象中提取内容
+            if (typeof policyResult.analysis === 'object') {
+                if (policyResult.analysis.policy_analysis) {
+                    policyText = policyResult.analysis.policy_analysis;
+                } else if (policyResult.analysis.text) {
+                    policyText = policyResult.analysis.text;
+                } else {
+                    // 移除JSON对象的花括号，只显示内容
+                    const analysisStr = JSON.stringify(policyResult.analysis, null, 2);
+                    policyText = analysisStr.replace(/^[{}]/, '').replace(/[{}]$/, '');
+                }
+            } else {
+                // 移除字符串中的花括号
+                policyText = policyResult.analysis.replace(/[{}]/g, '');
+            }
+            
+            policyText += '\n\n得分: ' + policyResult.score + '/1';
+            
+            // 添加得分理由（如果有）
+            if (policyResult.details && policyResult.details.reasons) {
+                policyText += '\n\n得分理由:\n' + policyResult.details.reasons.join('\n');
+            }
+            
+            document.getElementById('policyDetail').textContent = policyText;
+            
+            // 资金面和技术面
+            document.getElementById('capitalDetail').textContent = dimensions[1].analysis;
+            document.getElementById('technicalDetail').textContent = dimensions[2].analysis;
+            
+            // 更新时间
+            document.getElementById('timestamp').textContent = '分析时间: ' + data.analysis_time;
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            initCharts();
+            
+            // 等待DOM完全渲染后再加载K线数据
+            setTimeout(() => {
+                loadKlineData();
+            }, 200);
+        };
+        
+        // 窗口大小改变时重新调整图表（使用节流避免卡顿）
+        let resizeTimeout = null;
+        window.onresize = function() {
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
+            }
+            resizeTimeout = setTimeout(() => {
+                if (klineChart && klineChart.isDisposed()) {
+                    // 图表已被销毁，重新初始化
+                    initCharts();
+                    loadKlineData();
+                } else if (klineChart) {
+                    klineChart.resize();
+                }
+            }, 100);
+        };
+        
+        // 监听窗口大小变化（使用节流避免卡顿）
+        window.addEventListener('resize', function() {
+            if (resizeTimeout) {
+                clearTimeout(resizeTimeout);
+            }
+            resizeTimeout = setTimeout(() => {
+                if (klineChart && klineChart.isDisposed()) {
+                    // 图表已被销毁，重新初始化
+                    initCharts();
+                    loadKlineData();
+                } else if (klineChart) {
+                    klineChart.resize();
+                }
+            }, 100);
+        });
+        
+        // 页面滚动时暂停图表交互，防止卡顿
+        let isScrolling = false;
+        let scrollTimeout = null;
+        let lastScrollY = 0;
+        
+        window.addEventListener('scroll', function() {
+            const currentScrollY = window.scrollY;
+            
+            // 只有真正滚动页面时才处理（排除图表内部的缩放操作）
+            if (Math.abs(currentScrollY - lastScrollY) > 1) {
+                isScrolling = true;
+                
+                // 滚动时隐藏 tooltip 并清除交互状态
+                if (klineChart && !klineChart.isDisposed()) {
+                    klineChart.dispatchAction({
+                        type: 'hideTip'
+                    });
+                    klineChart.dispatchAction({
+                        type: 'downplay'
+                    });
+                    // 禁用图表交互
+                    klineChart.setOption({
+                        tooltip: {
+                            show: false
+                        }
+                    });
+                }
+                
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+                
+                scrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                    // 滚动结束后重新启用图表交互
+                    if (klineChart && !klineChart.isDisposed()) {
+                        klineChart.setOption({
+                            tooltip: {
+                                show: true
+                            }
+                        });
+                        klineChart.resize();
+                    }
+                }, 150);
+            }
+            
+            lastScrollY = currentScrollY;
+        });
+        
+        // 监听图表容器的鼠标离开事件
+        document.getElementById('klineChartWrapper').addEventListener('mouseleave', function() {
+            if (klineChart && !klineChart.isDisposed()) {
+                klineChart.dispatchAction({
+                    type: 'hideTip'
+                });
+                // 清除所有交互状态
+                klineChart.dispatchAction({
+                    type: 'downplay'
+                });
+            }
+        });
+        
+        // 监听图表容器的鼠标进入事件
+        document.getElementById('klineChartWrapper').addEventListener('mouseenter', function() {
+            if (klineChart && !klineChart.isDisposed()) {
+                // 重新设置图表选项以恢复交互
+                klineChart.resize();
+            }
+        });
+        
+        // 监听图表容器的点击事件，阻止冒泡
+        document.getElementById('klineChartWrapper').addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>
