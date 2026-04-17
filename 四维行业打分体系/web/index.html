@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四维行业打分体系 - 交互界面</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>📊 四维行业打分体系</h1>
+            <p class="subtitle">行业选择核心工具 - 从四个维度综合评估行业投资价值</p>
+        </header>
+
+        <!-- 导航标签 -->
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="input">📝 行业数据录入</button>
+            <button class="tab-btn" data-tab="result">📈 评分结果展示</button>
+            <button class="tab-btn" data-tab="compare">🔍 对比分析</button>
+            <button class="tab-btn" data-tab="help">❓ 使用说明</button>
+        </nav>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+
+            <!-- 标签页1：数据录入 -->
+            <section id="tab-input" class="tab-content active">
+                <div class="card">
+                    <h2>🎯 行业基本信息</h2>
+                    <div class="form-group">
+                        <label for="industry-name">行业名称：</label>
+                        <input type="text" id="industry-name" placeholder="例如：芯片、机器人、电池等" 
+                               list="industry-suggestions">
+                        <datalist id="industry-suggestions">
+                            <option value="芯片">
+                            <option value="机器人">
+                            <option value="电池">
+                            <option value="创新药">
+                            <option value="光伏">
+                            <option value="新能源汽车">
+                            <option value="人工智能">
+                            <option value="半导体">
+                        </datalist>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="industry-type">行业类型：</label>
+                            <select id="industry-type">
+                                <option value="">请选择</option>
+                                <option value="周期性">周期性（如半导体、光伏）</option>
+                                <option value="非周期性">非周期性（如消费、医药）</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cycle-phase">周期阶段：</label>
+                            <select id="cycle-phase">
+                                <option value="">请选择</option>
+                                <optgroup label="周期性行业阶段">
+                                    <option value="底部">底部</option>
+                                    <option value="底部反转">底部反转</option>
+                                    <option value="顶部">顶部</option>
+                                    <option value="衰退期">衰退期</option>
+                                </optgroup>
+                                <optgroup label="非周期性行业阶段">
+                                    <option value="成长期">成长期</option>
+                                    <option value="成熟期">成熟期</option>
+                                    <option value="衰退期">衰退期</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 维度二：政策面 -->
+                <div class="card">
+                    <h2>🏛️ 维度二：政策面</h2>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="has-support-policy">
+                            <span>有国家层面支持性政策</span>
+                        </label>
+                        <div class="sub-form" id="policy-detail-1">
+                            <textarea id="policy-description" rows="2" 
+                                      placeholder="政策描述（例如：国产替代政策支持、人工智能专项扶持等）"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="has-catalyst-event">
+                            <span>存在近期催化事件</span>
+                        </label>
+                        <div class="sub-form" id="policy-detail-2">
+                            <textarea id="catalyst-description" rows="2" 
+                                      placeholder="催化事件描述（例如：重大会议、补贴落地等）"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 维度三：资金面 -->
+                <div class="card">
+                    <h2>💰 维度三：资金面</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="etf-subscription">股票类ETF月度净申购金额（亿元）：</label>
+                            <input type="number" id="etf-subscription" step="0.01" 
+                                   placeholder="例如：150.5 或 -25.3">
+                            <small class="hint">正值表示净申购，负值表示净赎回</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="fund-position-change">公募基金季度仓位变化（%）：</label>
+                            <input type="number" id="fund-position-change" step="0.01" 
+                                   placeholder="例如：2.3 或 -1.2">
+                            <small class="hint">正值表示加仓，负值表示减仓</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 维度四：技术面 -->
+                <div class="card">
+                    <h2>📉 维度四：技术面</h2>
+                    <p class="card-desc">选择触发的技术信号类型（满足任一即可得1分）</p>
+                    
+                    <div class="signal-options">
+                        <div class="signal-option">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="technical-signal" value="意外大跌抄底">
+                                <span class="signal-icon">⚡</span>
+                                <span class="signal-title">意外大跌抄底机会</span>
+                            </label>
+                            <p class="signal-desc">行业指数或龙头股出现意外大跌，形成抄底机会</p>
+                        </div>
+                        
+                        <div class="signal-option">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="technical-signal" value="1020起爆点">
+                                <span class="signal-icon">🚀</span>
+                                <span class="signal-title">1020起爆点信号</span>
+                            </label>
+                            <p class="signal-desc">股价站上10日与20日均线，趋势转强信号</p>
+                        </div>
+                        
+                        <div class="signal-option">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="technical-signal" value="龙回头">
+                                <span class="signal-icon">🐉</span>
+                                <span class="signal-title">龙回头买入信号</span>
+                            </label>
+                            <p class="signal-desc">强势股回调后再度走强，二次启动信号</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary btn-large" onclick="calculateScore()">
+                        🎯 开始评分
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearForm()">
+                        🗑️ 清空表单
+                    </button>
+                    <button class="btn btn-success" onclick="addToComparison()">
+                        ➕ 加入对比列表
+                    </button>
+                </div>
+            </section>
+
+            <!-- 标签页2：评分结果 -->
+            <section id="tab-result" class="tab-content">
+                <div class="score-display" id="score-result" style="display: none;">
+                    <!-- 评分结果将动态插入这里 -->
+                </div>
+                
+                <div class="empty-state" id="empty-result">
+                    <div class="empty-icon">📊</div>
+                    <h3>暂无评分结果</h3>
+                    <p>请在"行业数据录入"页面填写信息并点击"开始评分"</p>
+                </div>
+            </section>
+
+            <!-- 标签页3：对比分析 -->
+            <section id="tab-compare" class="tab-content">
+                <div class="comparison-container">
+                    <div class="comparison-header">
+                        <h2>🔍 行业对比分析</h2>
+                        <button class="btn btn-danger btn-small" onclick="clearComparison()">
+                            🗑️ 清空对比列表
+                        </button>
+                    </div>
+                    
+                    <div class="comparison-table-wrapper">
+                        <table class="comparison-table" id="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>行业名称</th>
+                                    <th>景气度</th>
+                                    <th>政策面</th>
+                                    <th>资金面</th>
+                                    <th>技术面</th>
+                                    <th>总分</th>
+                                    <th>信号等级</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparison-tbody">
+                                <!-- 对比数据将动态插入 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="empty-state" id="empty-comparison">
+                        <div class="empty-icon">📋</div>
+                        <h3>对比列表为空</h3>
+                        <p>评分后点击"加入对比列表"按钮添加行业进行对比</p>
+                    </div>
+                    
+                    <!-- 统计图表 -->
+                    <div class="stats-section" id="stats-section" style="display: none;">
+                        <h3>📊 分数分布统计</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card stat-strong-buy">
+                                <div class="stat-score">4分</div>
+                                <div class="stat-level">强买入信号</div>
+                                <div class="stat-count" id="count-4">0个</div>
+                            </div>
+                            <div class="stat-card stat-latent">
+                                <div class="stat-score">3分</div>
+                                <div class="stat-level">潜伏信号</div>
+                                <div class="stat-count" id="count-3">0个</div>
+                            </div>
+                            <div class="stat-card stat-wait">
+                                <div class="stat-score">≤2分</div>
+                                <div class="stat-level">观望/淘汰</div>
+                                <div class="stat-count" id="count-2">0个</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 标签页4：使用说明 -->
+            <section id="tab-help" class="tab-content">
+                <div class="help-content">
+                    <div class="help-card">
+                        <h2>📖 体系概述</h2>
+                        <p>在确认大盘处于有利趋势环境后（三维共振系统判断），本策略通过<strong>"行业四维打分体系"</strong>筛选具备上涨潜力的行业赛道。</p>
+                        <p>该体系从<strong>行业景气度、政策面、资金面、技术面</strong>四个维度进行独立评估，每项满分为1分。</p>
+                        <ul class="highlight-list">
+                            <li>✅ 总分达到 <strong>3分及以上</strong> 视为具备配置价值（潜伏信号）</li>
+                            <li>✅ <strong>4分</strong> 为强买入信号</li>
+                            <li>❌ ≤2分 观望/淘汰</li>
+                        </ul>
+                    </div>
+
+                    <div class="help-card">
+                        <h2>🎯 四维评分标准</h2>
+                        
+                        <div class="dimension-explain">
+                            <h3><span class="dim-badge dim-1">维度一</span> 行业景气度（1分）</h3>
+                            <table class="explain-table">
+                                <tr>
+                                    <th>行业类型</th>
+                                    <th>得分条件</th>
+                                </tr>
+                                <tr>
+                                    <td>周期性行业</td>
+                                    <td>处于底部或底部反转阶段 ✓</td>
+                                </tr>
+                                <tr>
+                                    <td>非周期性行业</td>
+                                    <td>处于成长期或成熟期 ✓</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div class="dimension-explain">
+                            <h3><span class="dim-badge dim-2">维度二</span> 政策面（1分）</h3>
+                            <ul>
+                                <li>✅ 有国家层面支持性政策</li>
+                                <li>✅ 存在近期催化事件</li>
+                                <li><strong>两者均需满足才得1分</strong></li>
+                            </ul>
+                        </div>
+
+                        <div class="dimension-explain">
+                            <h3><span class="dim-badge dim-3">维度三</span> 资金面（1分）</h3>
+                            <ul>
+                                <li>✅ 股票类ETF月度净申购金额 &gt; 0</li>
+                                <li>✅ 公募基金季度仓位未出现下降</li>
+                                <li><strong>两者均需满足才得1分</strong></li>
+                            </ul>
+                        </div>
+
+                        <div class="dimension-explain">
+                            <h3><span class="dim-badge dim-4">维度四</span> 技术面（1分）</h3>
+                            <p>触发任一技术信号即可得1分：</p>
+                            <div class="signal-list">
+                                <div class="signal-item">
+                                    <strong>⚡ 意外大跌抄底</strong> - 行业指数或龙头股出现意外大跌
+                                </div>
+                                <div class="signal-item">
+                                    <strong>🚀 1020起爆点</strong> - 站上10日与20日均线
+                                </div>
+                                <div class="signal-item">
+                                    <strong>🐉 龙回头</strong> - 回调后再度走强
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-card">
+                        <h2>💡 操作建议</h2>
+                        <div class="action-guide">
+                            <div class="guide-item guide-4">
+                                <div class="guide-score">4分</div>
+                                <div class="guide-content">
+                                    <strong>强买入信号</strong>
+                                    <p>优先配置，可重仓参与，重点关注科技类成长产业</p>
+                                </div>
+                            </div>
+                            <div class="guide-item guide-3">
+                                <div class="guide-score">3分</div>
+                                <div class="guide-content">
+                                    <strong>潜伏信号</strong>
+                                    <p>具备配置价值，可适度建仓，等待进一步催化</p>
+                                </div>
+                            </div>
+                            <div class="guide-item guide-2">
+                                <div class="guide-score">≤2分</div>
+                                <div class="guide-content">
+                                    <strong>观望/淘汰</strong>
+                                    <p>不具备配置价值，应回避或减仓</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="help-card">
+                        <h2>⚠️ 注意事项</h2>
+                        <ul class="warning-list">
+                            <li>🔄 <strong>定期复盘</strong>：每周复盘一次行业评分</li>
+                            <li>📊 <strong>及时调整</strong>：淘汰得分降至2分以下的行业</li>
+                            <li>🔄 <strong>切换赛道</strong>：及时切换至新晋高分赛道</li>
+                            <li>📈 <strong>结合大盘</strong>：仅在三维共振确立的上升趋势环境中启用</li>
+                            <li>⚠️ <strong>风险控制</strong>：严禁机械照搬评分结果，必须坚守离场底线</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>四维行业打分体系 | 产业周期与市场动能结合 | 优先关注成长型科技产业</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript逻辑 -->
+    <script src="static/scoring-engine.js"></script>
+    <script src="static/app.js"></script>
+</body>
+</html>

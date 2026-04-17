@@ -1,0 +1,250 @@
+[
+  {
+    "industry_name": "芯片",
+    "prosperity_score": {
+      "dimension_name": "行业景气度",
+      "score": 1,
+      "reason": "周期性行业，处于底部反转阶段",
+      "details": {
+        "industry_type": "周期性",
+        "cycle_phase": "底部反转"
+      }
+    },
+    "policy_score": {
+      "dimension_name": "政策面",
+      "score": 1,
+      "reason": "有支持政策：国产替代政策支持 & 有催化事件：近期半导体产业政策发布",
+      "details": {
+        "has_support_policy": true,
+        "policy_description": "国产替代政策支持",
+        "has_catalyst_event": true,
+        "catalyst_description": "近期半导体产业政策发布"
+      }
+    },
+    "capital_score": {
+      "dimension_name": "资金面",
+      "score": 1,
+      "reason": "ETF净申购>0（150.50亿元），公募仓位上升（+2.30%）",
+      "details": {
+        "etf_net_subscription": 150.5,
+        "etf_positive": true,
+        "fund_position_change": 2.3,
+        "fund_position_not_declining": true
+      }
+    },
+    "technical_score": {
+      "dimension_name": "技术面",
+      "score": 1,
+      "reason": "触发技术信号：1020起爆点（站上10日与20日均线）",
+      "details": {
+        "signal_count": 1,
+        "signals": [
+          {
+            "type": "1020起爆点",
+            "description": "站上10日与20日均线",
+            "stock_code": ""
+          }
+        ]
+      }
+    },
+    "total_score": 4,
+    "signal_level": "强买入信号",
+    "action_advice": "优先配置，可重仓参与"
+  },
+  {
+    "industry_name": "机器人",
+    "prosperity_score": {
+      "dimension_name": "行业景气度",
+      "score": 1,
+      "reason": "非周期性行业，处于成长期",
+      "details": {
+        "industry_type": "非周期性",
+        "cycle_phase": "成长期"
+      }
+    },
+    "policy_score": {
+      "dimension_name": "政策面",
+      "score": 1,
+      "reason": "有支持政策：人工智能专项扶持政策 & 有催化事件：机器人应用场景拓展政策落地",
+      "details": {
+        "has_support_policy": true,
+        "policy_description": "人工智能专项扶持政策",
+        "has_catalyst_event": true,
+        "catalyst_description": "机器人应用场景拓展政策落地"
+      }
+    },
+    "capital_score": {
+      "dimension_name": "资金面",
+      "score": 1,
+      "reason": "ETF净申购>0（85.20亿元），公募仓位上升（+1.80%）",
+      "details": {
+        "etf_net_subscription": 85.2,
+        "etf_positive": true,
+        "fund_position_change": 1.8,
+        "fund_position_not_declining": true
+      }
+    },
+    "technical_score": {
+      "dimension_name": "技术面",
+      "score": 1,
+      "reason": "触发技术信号：龙回头（回调后再度走强）",
+      "details": {
+        "signal_count": 1,
+        "signals": [
+          {
+            "type": "龙回头",
+            "description": "回调后再度走强",
+            "stock_code": ""
+          }
+        ]
+      }
+    },
+    "total_score": 4,
+    "signal_level": "强买入信号",
+    "action_advice": "优先配置，可重仓参与"
+  },
+  {
+    "industry_name": "电池",
+    "prosperity_score": {
+      "dimension_name": "行业景气度",
+      "score": 1,
+      "reason": "非周期性行业，处于成长期",
+      "details": {
+        "industry_type": "非周期性",
+        "cycle_phase": "成长期"
+      }
+    },
+    "policy_score": {
+      "dimension_name": "政策面",
+      "score": 1,
+      "reason": "有支持政策：新能源延续性政策支持 & 有催化事件：新能源汽车补贴政策延续",
+      "details": {
+        "has_support_policy": true,
+        "policy_description": "新能源延续性政策支持",
+        "has_catalyst_event": true,
+        "catalyst_description": "新能源汽车补贴政策延续"
+      }
+    },
+    "capital_score": {
+      "dimension_name": "资金面",
+      "score": 1,
+      "reason": "ETF净申购>0（120.00亿元），公募仓位上升（+0.50%）",
+      "details": {
+        "etf_net_subscription": 120.0,
+        "etf_positive": true,
+        "fund_position_change": 0.5,
+        "fund_position_not_declining": true
+      }
+    },
+    "technical_score": {
+      "dimension_name": "技术面",
+      "score": 1,
+      "reason": "触发技术信号：意外大跌抄底（行业指数出现意外大跌后的抄底机会）",
+      "details": {
+        "signal_count": 1,
+        "signals": [
+          {
+            "type": "意外大跌抄底",
+            "description": "行业指数出现意外大跌后的抄底机会",
+            "stock_code": ""
+          }
+        ]
+      }
+    },
+    "total_score": 4,
+    "signal_level": "强买入信号",
+    "action_advice": "优先配置，可重仓参与"
+  },
+  {
+    "industry_name": "创新药",
+    "prosperity_score": {
+      "dimension_name": "行业景气度",
+      "score": 1,
+      "reason": "非周期性行业，处于成长期",
+      "details": {
+        "industry_type": "非周期性",
+        "cycle_phase": "成长期"
+      }
+    },
+    "policy_score": {
+      "dimension_name": "政策面",
+      "score": 1,
+      "reason": "有支持政策：创新药专项扶持政策 & 有催化事件：医保谈判利好消息",
+      "details": {
+        "has_support_policy": true,
+        "policy_description": "创新药专项扶持政策",
+        "has_catalyst_event": true,
+        "catalyst_description": "医保谈判利好消息"
+      }
+    },
+    "capital_score": {
+      "dimension_name": "资金面",
+      "score": 0,
+      "reason": "公募仓位下降（-1.20%）",
+      "details": {
+        "etf_net_subscription": 65.8,
+        "etf_positive": true,
+        "fund_position_change": -1.2,
+        "fund_position_not_declining": false
+      }
+    },
+    "technical_score": {
+      "dimension_name": "技术面",
+      "score": 0,
+      "reason": "无技术信号触发",
+      "details": {
+        "signal_count": 0,
+        "signals": []
+      }
+    },
+    "total_score": 2,
+    "signal_level": "观望/淘汰",
+    "action_advice": "不具备配置价值，应回避或减仓"
+  },
+  {
+    "industry_name": "钢铁",
+    "prosperity_score": {
+      "dimension_name": "行业景气度",
+      "score": 0,
+      "reason": "周期性行业，但处于衰退期阶段（非理想状态） - 衰退型行业，建议回避",
+      "details": {
+        "industry_type": "周期性",
+        "cycle_phase": "衰退期"
+      }
+    },
+    "policy_score": {
+      "dimension_name": "政策面",
+      "score": 0,
+      "reason": "无明确支持政策；无近期催化事件",
+      "details": {
+        "has_support_policy": false,
+        "policy_description": "",
+        "has_catalyst_event": false,
+        "catalyst_description": ""
+      }
+    },
+    "capital_score": {
+      "dimension_name": "资金面",
+      "score": 0,
+      "reason": "ETF净申购≤0（-25.30亿元）；公募仓位下降（-3.50%）",
+      "details": {
+        "etf_net_subscription": -25.3,
+        "etf_positive": false,
+        "fund_position_change": -3.5,
+        "fund_position_not_declining": false
+      }
+    },
+    "technical_score": {
+      "dimension_name": "技术面",
+      "score": 0,
+      "reason": "无技术信号触发",
+      "details": {
+        "signal_count": 0,
+        "signals": []
+      }
+    },
+    "total_score": 0,
+    "signal_level": "观望/淘汰",
+    "action_advice": "不具备配置价值，应回避或减仓"
+  }
+]

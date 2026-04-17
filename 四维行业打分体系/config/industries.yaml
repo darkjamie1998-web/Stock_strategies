@@ -1,0 +1,84 @@
+industries:
+  - name: "芯片"
+    industry_type: "周期性"
+    cycle_phase: "底部反转"
+    is_recommended: true
+    policy:
+      has_support_policy: true
+      policy_description: "国产替代政策支持"
+      has_catalyst_event: true
+      catalyst_description: "近期半导体产业政策发布"
+    capital:
+      etf_net_subscription: 150.5
+      fund_position_change: 2.3
+    technical:
+      signals:
+        - signal_type: "1020起爆点"
+          description: "站上10日与20日均线"
+          stock_code: ""
+
+  - name: "机器人"
+    industry_type: "非周期性"
+    cycle_phase: "成长期"
+    is_recommended: true
+    policy:
+      has_support_policy: true
+      policy_description: "人工智能专项扶持政策"
+      has_catalyst_event: true
+      catalyst_description: "机器人应用场景拓展政策落地"
+    capital:
+      etf_net_subscription: 85.2
+      fund_position_change: 1.8
+    technical:
+      signals:
+        - signal_type: "龙回头"
+          description: "回调后再度走强"
+          stock_code: ""
+
+  - name: "电池"
+    industry_type: "非周期性"
+    cycle_phase: "成长期"
+    is_recommended: true
+    policy:
+      has_support_policy: true
+      policy_description: "新能源延续性政策支持"
+      has_catalyst_event: true
+      catalyst_description: "新能源汽车补贴政策延续"
+    capital:
+      etf_net_subscription: 120.0
+      fund_position_change: 0.5
+    technical:
+      signals:
+        - signal_type: "意外大跌抄底"
+          description: "行业指数出现意外大跌后的抄底机会"
+          stock_code: ""
+
+  - name: "创新药"
+    industry_type: "非周期性"
+    cycle_phase: "成长期"
+    is_recommended: true
+    policy:
+      has_support_policy: true
+      policy_description: "创新药专项扶持政策"
+      has_catalyst_event: true
+      catalyst_description: "医保谈判利好消息"
+    capital:
+      etf_net_subscription: 65.8
+      fund_position_change: -1.2
+    technical:
+      signals: []
+
+  - name: "钢铁"
+    industry_type: "周期性"
+    cycle_phase: "衰退期"
+    is_recommended: false
+    policy:
+      has_support_policy: false
+      policy_description: ""
+      has_catalyst_event: false
+      catalyst_description: ""
+    capital:
+      etf_net_subscription: -25.3
+      fund_position_change: -3.5
+    technical:
+      signals: []
