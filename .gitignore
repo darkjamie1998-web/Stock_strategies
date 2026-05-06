@@ -5,6 +5,9 @@ tushare_token.txt
 # 忽略所有token文件
 *_token.txt
 
+# 忽略包含token的Python配置文件
+*/config/tushare_token.py
+
 # 忽略A股上市公司数据目录（大数据量CSV文件）
 A股上市公司数据/
 */A股上市公司数据/
