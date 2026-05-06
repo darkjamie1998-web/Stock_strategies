@@ -6,8 +6,11 @@
 import json
 import requests
 import os
+import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 class QwenAPI:
@@ -84,7 +87,7 @@ class QwenAPI:
                         "from_cache": True
                     }
         except Exception as e:
-            print(f"读取缓存失败: {e}")
+            logger.warning(f"读取缓存失败: {e}")
             return None
     
     def _save_to_cache(self, date: str, result: Dict[str, Any]) -> bool:
@@ -107,7 +110,7 @@ class QwenAPI:
                 f.write(result['raw_content'])
             return True
         except Exception as e:
-            print(f"保存缓存失败: {e}")
+            logger.warning(f"保存缓存失败: {e}")
             return False
     
     def analyze_policy(self, prompt: str, current_date: Optional[str] = None) -> Dict[str, Any]:
@@ -128,11 +131,10 @@ class QwenAPI:
         # 首先检查本地缓存
         cached_result = self._load_from_cache(current_date)
         if cached_result:
-            print(f"使用本地缓存的政策面分析数据 ({current_date})")
+            logger.info(f"使用本地缓存的政策面分析数据 ({current_date})")
             return cached_result
         
-        # 缓存不存在，调用API
-        print(f"本地缓存不存在，调用千问API获取政策面分析 ({current_date})")
+        logger.info(f"本地缓存不存在，调用千问API获取政策面分析 ({current_date})")
         
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -177,7 +179,7 @@ class QwenAPI:
                 
                 # 尝试从内容中提取JSON
                 try:
-                    print(f"API返回内容: {content[:200]}...")
+                    logger.info(f"API返回内容: {content[:200]}...")
                     
                     # 清理内容中的markdown代码块标记
                     cleaned_content = content.strip()
@@ -189,7 +191,7 @@ class QwenAPI:
                         cleaned_content = cleaned_content[:-3]
                     cleaned_content = cleaned_content.strip()
                     
-                    print(f"清理后内容: {cleaned_content[:200]}...")
+                    logger.info(f"清理后内容: {cleaned_content[:200]}...")
                     
                     # 查找JSON格式的内容
                     json_start = cleaned_content.find("{")
@@ -197,7 +199,7 @@ class QwenAPI:
                     
                     if json_start >= 0 and json_end > json_start:
                         json_str = cleaned_content[json_start:json_end]
-                        print(f"提取的JSON: {json_str[:200]}...")
+                        logger.info(f"提取的JSON: {json_str[:200]}...")
                         
                         try:
                             analysis_result = json.loads(json_str)
@@ -222,7 +224,7 @@ class QwenAPI:
                             
                             return result_data
                         except json.JSONDecodeError as json_err:
-                            print(f"JSON解析错误: {json_err}")
+                            logger.warning(f"JSON解析错误: {json_err}")
                             # 尝试从文本中提取得分
                             score = 0
                             if '"score": 1' in json_str or '"score":1' in json_str:
@@ -262,7 +264,7 @@ class QwenAPI:
                         return result_data
                         
                 except Exception as e:
-                    print(f"处理异常: {e}")
+                    logger.warning(f"处理异常: {e}")
                     # 任何异常都返回文本分析结果
                     score = 1 if ("支持" in content or "宽松" in content) else 0
                     
@@ -316,10 +318,40 @@ class QwenAPI:
         return self.analyze_policy(prompt, current_date)
 
 
+def load_api_key_from_file(file_path: str = "qwen_token.txt") -> str:
+    """
+    从文件加载API密钥
+    
+    Args:
+        file_path: 存储API密钥的文件路径，默认为"qwen_token.txt"
+        
+    Returns:
+        API密钥字符串
+        
+    Raises:
+        FileNotFoundError: 当文件不存在时
+        ValueError: 当文件内容为空时
+    """
+    # 获取当前脚本所在目录，确保从正确的位置查找文件
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(script_dir, file_path)
+    
+    if not os.path.exists(full_path):
+        raise FileNotFoundError(f"API密钥文件不存在: {full_path}")
+    
+    with open(full_path, 'r', encoding='utf-8') as f:
+        api_key = f.read().strip()
+    
+    if not api_key:
+        raise ValueError(f"API密钥文件为空: {full_path}")
+    
+    return api_key
+
+
 # 测试代码
 if __name__ == "__main__":
     # 测试API调用
-    api_key = "sk-4613f6b3b3664049b0b7d808bd3c9b9a"
+    api_key = load_api_key_from_file()
     client = QwenAPI(api_key)
     
     print("正在调用千问API分析政策面...")

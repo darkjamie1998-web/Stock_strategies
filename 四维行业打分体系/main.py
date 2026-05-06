@@ -209,22 +209,8 @@ def start_web_server(port=8080):
 
 def main():
     """主函数"""
-    print("\n" + "=" * 70)
-    print("       四维行业打分体系 - 行业选择核心工具")
-    print("=" * 70)
-    print("\n正在启动 Web 交互界面...")
-    print("系统概述：")
-    print("  - 从行业景气度、政策面、资金面、技术面四个维度进行独立评估")
-    print("  - 每项满分为 1 分，总分达到 3 分及以上视为具备配置价值")
-    print("  - 4 分为强买入信号，<=2 分为观望/淘汰")
-    print()
-    
-    try:
-        start_web_server()
-    except Exception as e:
-        print(f"\n程序运行出错：{e}")
-        import traceback
-        traceback.print_exc()
+    from server import start_server
+    start_server()
 
 
 if __name__ == "__main__":

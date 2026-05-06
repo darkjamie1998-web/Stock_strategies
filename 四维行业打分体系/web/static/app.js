@@ -10,6 +10,7 @@ let currentScoreResult = null;
 // DOM加载完成后初始化
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    loadTokenFromStorage();
 });
 
 /**
@@ -19,6 +20,271 @@ function initializeApp() {
     setupTabNavigation();
     setupFormInteractions();
     loadFromLocalStorage();
+}
+
+// ============================================================
+// Tushare 数据获取 API 调用
+// ============================================================
+
+const API_BASE = '';
+
+function getToken() {
+    return document.getElementById('tushare-token').value.trim();
+}
+
+function getIndustryName() {
+    return document.getElementById('industry-name').value.trim();
+}
+
+function saveTokenToStorage(token) {
+    try {
+        localStorage.setItem('tushare_token', token);
+    } catch (e) {}
+}
+
+function loadTokenFromStorage() {
+    try {
+        const saved = localStorage.getItem('tushare_token');
+        if (saved) {
+            document.getElementById('tushare-token').value = saved;
+        }
+    } catch (e) {}
+}
+
+function toggleTokenVisibility() {
+    const input = document.getElementById('tushare-token');
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+async function apiCall(endpoint, body) {
+    const resp = await fetch(API_BASE + endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+    const data = await resp.json();
+    if (!resp.ok || data.error) {
+        throw new Error(data.error || `HTTP ${resp.status}`);
+    }
+    return data;
+}
+
+function showFetchStatus(elementId, message, type) {
+    const el = document.getElementById(elementId);
+    el.style.display = 'block';
+    el.className = `fetch-status fetch-${type}`;
+    el.textContent = message;
+    if (type === 'success') {
+        setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+}
+
+function setButtonLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (loading) {
+        btn.disabled = true;
+        btn.dataset.originalText = btn.textContent;
+        btn.textContent = '⏳ 获取中...';
+    } else {
+        btn.disabled = false;
+        btn.textContent = btn.dataset.originalText || btn.textContent;
+    }
+}
+
+async function testTushareConnection() {
+    const token = getToken();
+    if (!token) {
+        showAlert('请先输入Tushare Token', 'warning');
+        return;
+    }
+
+    const statusEl = document.getElementById('connection-status');
+    statusEl.style.display = 'block';
+    statusEl.className = 'connection-status status-loading';
+    statusEl.textContent = '⏳ 正在测试连接...';
+
+    setButtonLoading('btn-test-conn', true);
+
+    try {
+        const data = await apiCall('/api/fetch_industry', {
+            token: token,
+            industry_name: '人工智能'
+        });
+
+        saveTokenToStorage(token);
+        statusEl.className = 'connection-status status-success';
+        statusEl.innerHTML = `✅ 连接成功！支持 ${data.ths_code ? '同花顺行业指数' : '基础数据'}，行业类型：${data.industry_type}，周期阶段：${data.cycle_phase}`;
+        showAlert('Tushare 连接成功！', 'success');
+    } catch (e) {
+        statusEl.className = 'connection-status status-error';
+        statusEl.textContent = `❌ 连接失败：${e.message}`;
+        showAlert(`连接失败：${e.message}`, 'error');
+    } finally {
+        setButtonLoading('btn-test-conn', false);
+    }
+}
+
+async function fetchCapitalData() {
+    const token = getToken();
+    const industryName = getIndustryName();
+
+    if (!token) { showAlert('请先输入Tushare Token', 'warning'); return; }
+    if (!industryName) { showAlert('请先输入行业名称', 'warning'); return; }
+
+    setButtonLoading('btn-fetch-capital', true);
+    showFetchStatus('capital-fetch-status', '⏳ 正在获取ETF资金流向数据...', 'loading');
+
+    try {
+        const data = await apiCall('/api/fetch_capital', {
+            token: token,
+            industry_name: industryName
+        });
+
+        document.getElementById('etf-subscription').value = data.etf_net_subscription;
+
+        if (!data.fund_position_available) {
+            showFetchStatus('capital-fetch-status',
+                `⚠️ ETF资金已获取（净申购：${data.etf_net_subscription}亿），公募仓位需手动填写（需Tushare高级积分）`,
+                'warning');
+        } else {
+            document.getElementById('fund-position-change').value = data.fund_position_change;
+            showFetchStatus('capital-fetch-status',
+                `✅ 资金面数据已填充：ETF净申购 ${data.etf_net_subscription}亿，公募仓位变化 ${data.fund_position_change}%`,
+                'success');
+        }
+
+        saveTokenToStorage(token);
+    } catch (e) {
+        showFetchStatus('capital-fetch-status', `❌ 获取失败：${e.message}`, 'error');
+    } finally {
+        setButtonLoading('btn-fetch-capital', false);
+    }
+}
+
+async function fetchTechnicalData() {
+    const token = getToken();
+    const industryName = getIndustryName();
+
+    if (!token) { showAlert('请先输入Tushare Token', 'warning'); return; }
+    if (!industryName) { showAlert('请先输入行业名称', 'warning'); return; }
+
+    setButtonLoading('btn-fetch-technical', true);
+    showFetchStatus('technical-fetch-status', '⏳ 正在检测技术信号...', 'loading');
+
+    try {
+        const data = await apiCall('/api/fetch_technical', {
+            token: token,
+            industry_name: industryName
+        });
+
+        document.querySelectorAll('input[name="technical-signal"]').forEach(cb => {
+            cb.checked = false;
+            const optDiv = cb.closest('.signal-option');
+            if (optDiv) optDiv.classList.remove('selected');
+        });
+
+        if (data.signals && data.signals.length > 0) {
+            data.signals.forEach(sig => {
+                document.querySelectorAll('input[name="technical-signal"]').forEach(cb => {
+                    if (cb.value === sig.signal_type) {
+                        cb.checked = true;
+                        const optDiv = cb.closest('.signal-option');
+                        if (optDiv) optDiv.classList.add('selected');
+                    }
+                });
+            });
+
+            const sigNames = data.signals.map(s => s.signal_type).join('、');
+            showFetchStatus('technical-fetch-status',
+                `✅ 检测到 ${data.signals.length} 个信号：${sigNames}`,
+                'success');
+        } else {
+            showFetchStatus('technical-fetch-status',
+                'ℹ️ 当前未检测到技术信号（1020起爆点/龙回头/意外大跌抄底）',
+                'info');
+        }
+
+        if (data.metrics && Object.keys(data.metrics).length > 0) {
+            const m = data.metrics;
+            showFetchStatus('technical-fetch-status',
+                `✅ 技术指标：收盘${m.close} | MA10:${m.ma10} | MA20:${m.ma20} | 偏离MA20:${m.deviation_ma20}% | ${data.reason}`,
+                'success');
+        }
+
+        saveTokenToStorage(token);
+    } catch (e) {
+        showFetchStatus('technical-fetch-status', `❌ 检测失败：${e.message}`, 'error');
+    } finally {
+        setButtonLoading('btn-fetch-technical', false);
+    }
+}
+
+async function fetchAllData() {
+    const token = getToken();
+    const industryName = getIndustryName();
+
+    if (!token) { showAlert('请先输入Tushare Token', 'warning'); return; }
+    if (!industryName) { showAlert('请先输入行业名称', 'warning'); return; }
+
+    setButtonLoading('btn-fetch-all', true);
+
+    const statusEl = document.getElementById('connection-status');
+    statusEl.style.display = 'block';
+    statusEl.className = 'connection-status status-loading';
+    statusEl.textContent = '⏳ 正在获取全部数据...';
+
+    try {
+        const data = await apiCall('/api/fetch_all', {
+            token: token,
+            industry_name: industryName
+        });
+
+        const ind = data.industry;
+        document.getElementById('industry-type').value = ind.industry_type;
+        document.getElementById('cycle-phase').value = ind.cycle_phase;
+
+        const cap = data.capital;
+        document.getElementById('etf-subscription').value = cap.etf_net_subscription;
+        if (cap.fund_position_available) {
+            document.getElementById('fund-position-change').value = cap.fund_position_change;
+        }
+
+        const tech = data.technical;
+        document.querySelectorAll('input[name="technical-signal"]').forEach(cb => {
+            cb.checked = false;
+            const optDiv = cb.closest('.signal-option');
+            if (optDiv) optDiv.classList.remove('selected');
+        });
+        if (tech.signals && tech.signals.length > 0) {
+            tech.signals.forEach(sig => {
+                document.querySelectorAll('input[name="technical-signal"]').forEach(cb => {
+                    if (cb.value === sig.signal_type) {
+                        cb.checked = true;
+                        const optDiv = cb.closest('.signal-option');
+                        if (optDiv) optDiv.classList.add('selected');
+                    }
+                });
+            });
+        }
+
+        saveTokenToStorage(token);
+
+        const sigCount = tech.signals ? tech.signals.length : 0;
+        statusEl.className = 'connection-status status-success';
+        statusEl.innerHTML = `
+            ✅ 全部数据已填充！<br>
+            📊 行业类型：${ind.industry_type} | 周期阶段：${ind.cycle_phase}（${ind.phase_reason}）<br>
+            💰 ETF净申购：${cap.etf_net_subscription}亿 | 公募仓位：${cap.fund_position_available ? '已获取' : '需手动填写'}<br>
+            📉 技术信号：${sigCount}个（${tech.reason}）
+        `;
+        showAlert('全部数据已自动填充！请检查并补充政策面信息后点击"开始评分"', 'success');
+    } catch (e) {
+        statusEl.className = 'connection-status status-error';
+        statusEl.textContent = `❌ 获取失败：${e.message}`;
+        showAlert(`获取失败：${e.message}`, 'error');
+    } finally {
+        setButtonLoading('btn-fetch-all', false);
+    }
 }
 
 /**

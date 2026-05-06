@@ -1,0 +1,31 @@
+# 忽略包含敏感信息的token文件
+qwen_token.txt
+tushare_token.txt
+
+# 忽略所有token文件
+*_token.txt
+
+# 忽略A股上市公司数据目录（大数据量CSV文件）
+A股上市公司数据/
+*/A股上市公司数据/
+*/*/A股上市公司数据/
+
+# 忽略dist构建目录中的敏感文件和数据
+*/dist/*/*_token.txt
+*/dist/*/A股上市公司数据/
+
+# 忽略Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 忽略虚拟环境
+venv/
+env/
+.venv/
+
+# 忽略IDE配置
+.idea/
+.vscode/
+*.swp
+*.swo

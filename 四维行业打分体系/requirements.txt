@@ -1,2 +1,4 @@
 pandas>=2.0.0
 pyyaml>=6.0
+tushare>=1.4.0
+flask>=3.0.0

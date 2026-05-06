@@ -6,11 +6,14 @@
 
 import json
 import os
+import logging
 from typing import Dict, Any, Optional
 from datetime import datetime
 from policy_prompt import get_policy_prompt
 from qwen_api import QwenAPI
 from market_data import ZhongZhengData
+
+logger = logging.getLogger(__name__)
 
 
 class ThreeDimensionalScoringSystem:
@@ -42,7 +45,7 @@ class ThreeDimensionalScoringSystem:
         Returns:
             政策面评分结果
         """
-        print("正在分析政策面...")
+        logger.info("正在分析政策面...")
         result = self.qwen_client.get_policy_score()
         
         if result["success"]:
@@ -62,74 +65,6 @@ class ThreeDimensionalScoringSystem:
                 "max_score": 1,
                 "analysis": f"分析失败: {result.get('error', '未知错误')}",
                 "error": result.get('error', '未知错误'),
-                "timestamp": datetime.now().isoformat(),
-                "from_cache": False
-            }
-    
-    def calculate_capital_score(self) -> Dict[str, Any]:
-        """
-        计算资金面得分（自动使用本地缓存）
-        
-        Returns:
-            资金面评分结果
-        """
-        print("正在分析资金面...")
-        market_result = self.market_analyzer.get_full_analysis()
-        
-        if market_result["success"]:
-            capital = market_result["capital"]
-            return {
-                "dimension": "资金面",
-                "score": capital["score"],
-                "max_score": 1,
-                "analysis": capital["analysis"],
-                "details": capital["details"],
-                "index_name": market_result["index_name"],
-                "latest_close": market_result["latest_close"],
-                "timestamp": datetime.now().isoformat(),
-                "from_cache": market_result.get("from_cache", False)
-            }
-        else:
-            return {
-                "dimension": "资金面",
-                "score": 0,
-                "max_score": 1,
-                "analysis": f"分析失败: {market_result.get('error', '未知错误')}",
-                "error": market_result.get('error', '未知错误'),
-                "timestamp": datetime.now().isoformat(),
-                "from_cache": False
-            }
-    
-    def calculate_technical_score(self) -> Dict[str, Any]:
-        """
-        计算技术面得分（自动使用本地缓存）
-        
-        Returns:
-            技术面评分结果
-        """
-        print("正在分析技术面...")
-        market_result = self.market_analyzer.get_full_analysis()
-        
-        if market_result["success"]:
-            technical = market_result["technical"]
-            return {
-                "dimension": "技术面",
-                "score": technical["score"],
-                "max_score": 1,
-                "analysis": technical["analysis"],
-                "details": technical["details"],
-                "index_name": market_result["index_name"],
-                "latest_close": market_result["latest_close"],
-                "timestamp": datetime.now().isoformat(),
-                "from_cache": market_result.get("from_cache", False)
-            }
-        else:
-            return {
-                "dimension": "技术面",
-                "score": 0,
-                "max_score": 1,
-                "analysis": f"分析失败: {market_result.get('error', '未知错误')}",
-                "error": market_result.get('error', '未知错误'),
                 "timestamp": datetime.now().isoformat(),
                 "from_cache": False
             }
@@ -180,17 +115,17 @@ class ThreeDimensionalScoringSystem:
         Returns:
             完整的三维共振打分结果
         """
-        print("=" * 50)
-        print("开始三维共振打分分析")
+        logger.info("=" * 50)
+        logger.info("开始三维共振打分分析")
         if force_update:
-            print("【强制更新模式 - 忽略本地缓存】")
-        print("=" * 50)
+            logger.info("【强制更新模式 - 忽略本地缓存】")
+        logger.info("=" * 50)
         
         # 计算各维度得分
         policy_result = self.calculate_policy_score()
         
         # 资金和技术面使用相同的市场数据，避免重复获取
-        print("正在获取市场数据...")
+        logger.info("正在获取市场数据...")
         market_result = self.market_analyzer.get_full_analysis(force_update=force_update)
         
         if market_result["success"]:
@@ -314,7 +249,8 @@ class ThreeDimensionalScoringSystem:
 
 # 测试代码
 if __name__ == "__main__":
-    API_KEY = "sk-4613f6b3b3664049b0b7d808bd3c9b9a"
+    from qwen_api import load_api_key_from_file
+    API_KEY = load_api_key_from_file()
     
     # 创建打分系统实例
     scoring_system = ThreeDimensionalScoringSystem(API_KEY)

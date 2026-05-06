@@ -6,14 +6,29 @@
 from flask import Flask, render_template, jsonify, request
 import json
 import pandas as pd
+import os
+import sys
+import logging
 from datetime import datetime
 from scoring_system import ThreeDimensionalScoringSystem
 from market_data import ZhongZhengData
+from qwen_api import load_api_key_from_file
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# 千问API密钥
-API_KEY = "sk-4613f6b3b3664049b0b7d808bd3c9b9a"
+try:
+    API_KEY = load_api_key_from_file()
+except (FileNotFoundError, ValueError) as e:
+    logger.error(f"API密钥加载失败: {e}")
+    logger.error("请确保 qwen_token.txt 文件存在且包含有效的 API Key")
+    sys.exit(1)
 
 # 全局变量存储最新结果
 latest_result = None
@@ -193,6 +208,14 @@ def get_kline_data():
 
 
 if __name__ == '__main__':
-    print("启动三维共振打分系统...")
-    print("访问地址: http://127.0.0.1:5000")
+    import webbrowser
+    import threading
+    
+    def open_browser():
+        webbrowser.open('http://127.0.0.1:5000')
+    
+    logger.info("启动三维共振打分系统...")
+    logger.info("访问地址: http://127.0.0.1:5000")
+    
+    threading.Timer(1.5, open_browser).start()
     app.run(debug=True, host='0.0.0.0', port=5000)

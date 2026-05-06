@@ -27,6 +27,33 @@
 
             <!-- 标签页1：数据录入 -->
             <section id="tab-input" class="tab-content active">
+                <!-- 数据源配置 -->
+                <div class="card data-source-card">
+                    <h2>🔌 数据源配置（Tushare）</h2>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="tushare-token">Tushare Token：</label>
+                            <div class="input-with-button">
+                                <input type="password" id="tushare-token" placeholder="输入你的Tushare Pro Token"
+                                       autocomplete="off">
+                                <button class="btn btn-small btn-secondary" onclick="toggleTokenVisibility()" type="button">
+                                    👁️
+                                </button>
+                            </div>
+                            <small class="hint">在 <a href="https://tushare.pro" target="_blank">tushare.pro</a> 注册即可免费获取Token</small>
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                            <button class="btn btn-primary btn-small" onclick="testTushareConnection()" id="btn-test-conn">
+                                🔍 测试连接
+                            </button>
+                            <button class="btn btn-success btn-small" onclick="fetchAllData()" id="btn-fetch-all">
+                                🚀 一键获取全部
+                            </button>
+                        </div>
+                    </div>
+                    <div id="connection-status" class="connection-status" style="display: none;"></div>
+                </div>
+
                 <div class="card">
                     <h2>🎯 行业基本信息</h2>
                     <div class="form-group">
@@ -75,7 +102,9 @@
 
                 <!-- 维度二：政策面 -->
                 <div class="card">
-                    <h2>🏛️ 维度二：政策面</h2>
+                    <h2>🏛️ 维度二：政策面
+                        <span class="dim-hint">（需手动填写 / 未来接入AI分析）</span>
+                    </h2>
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="has-support-policy">
@@ -100,7 +129,12 @@
 
                 <!-- 维度三：资金面 -->
                 <div class="card">
-                    <h2>💰 维度三：资金面</h2>
+                    <h2>💰 维度三：资金面
+                        <button class="btn btn-small btn-outline" onclick="fetchCapitalData()" id="btn-fetch-capital" type="button">
+                            📡 自动获取
+                        </button>
+                    </h2>
+                    <div id="capital-fetch-status" class="fetch-status" style="display: none;"></div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="etf-subscription">股票类ETF月度净申购金额（亿元）：</label>
@@ -119,7 +153,12 @@
 
                 <!-- 维度四：技术面 -->
                 <div class="card">
-                    <h2>📉 维度四：技术面</h2>
+                    <h2>📉 维度四：技术面
+                        <button class="btn btn-small btn-outline" onclick="fetchTechnicalData()" id="btn-fetch-technical" type="button">
+                            📡 自动检测
+                        </button>
+                    </h2>
+                    <div id="technical-fetch-status" class="fetch-status" style="display: none;"></div>
                     <p class="card-desc">选择触发的技术信号类型（满足任一即可得1分）</p>
                     
                     <div class="signal-options">

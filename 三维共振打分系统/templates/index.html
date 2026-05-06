@@ -345,7 +345,7 @@
             </div>
         </div>
         
-        <div id="results" class="hidden">
+        <div id="results">
             <div class="dimensions-grid">
                 <div class="dimension-card">
                     <div class="dimension-icon icon-policy">政</div>
@@ -788,93 +788,31 @@
         // 页面加载完成后初始化
         window.onload = function() {
             initCharts();
-            
-            // 等待DOM完全渲染后再加载K线数据
-            setTimeout(() => {
-                loadKlineData();
-            }, 200);
+            loadKlineData();
         };
         
-        // 窗口大小改变时重新调整图表（使用节流避免卡顿）
         let resizeTimeout = null;
-        window.onresize = function() {
-            if (resizeTimeout) {
-                clearTimeout(resizeTimeout);
-            }
-            resizeTimeout = setTimeout(() => {
-                if (klineChart && klineChart.isDisposed()) {
-                    // 图表已被销毁，重新初始化
-                    initCharts();
-                    loadKlineData();
-                } else if (klineChart) {
-                    klineChart.resize();
-                }
-            }, 100);
-        };
-        
-        // 监听窗口大小变化（使用节流避免卡顿）
         window.addEventListener('resize', function() {
             if (resizeTimeout) {
                 clearTimeout(resizeTimeout);
             }
             resizeTimeout = setTimeout(() => {
-                if (klineChart && klineChart.isDisposed()) {
-                    // 图表已被销毁，重新初始化
-                    initCharts();
-                    loadKlineData();
-                } else if (klineChart) {
+                if (klineChart && !klineChart.isDisposed()) {
                     klineChart.resize();
                 }
-            }, 100);
+            }, 150);
         });
         
-        // 页面滚动时暂停图表交互，防止卡顿
-        let isScrolling = false;
         let scrollTimeout = null;
-        let lastScrollY = 0;
-        
         window.addEventListener('scroll', function() {
-            const currentScrollY = window.scrollY;
-            
-            // 只有真正滚动页面时才处理（排除图表内部的缩放操作）
-            if (Math.abs(currentScrollY - lastScrollY) > 1) {
-                isScrolling = true;
-                
-                // 滚动时隐藏 tooltip 并清除交互状态
-                if (klineChart && !klineChart.isDisposed()) {
-                    klineChart.dispatchAction({
-                        type: 'hideTip'
-                    });
-                    klineChart.dispatchAction({
-                        type: 'downplay'
-                    });
-                    // 禁用图表交互
-                    klineChart.setOption({
-                        tooltip: {
-                            show: false
-                        }
-                    });
-                }
-                
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-                
-                scrollTimeout = setTimeout(() => {
-                    isScrolling = false;
-                    // 滚动结束后重新启用图表交互
-                    if (klineChart && !klineChart.isDisposed()) {
-                        klineChart.setOption({
-                            tooltip: {
-                                show: true
-                            }
-                        });
-                        klineChart.resize();
-                    }
-                }, 150);
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
             }
-            
-            lastScrollY = currentScrollY;
+            scrollTimeout = setTimeout(() => {
+                if (klineChart && !klineChart.isDisposed()) {
+                    klineChart.resize();
+                }
+            }, 150);
         });
         
         // 监听图表容器的鼠标离开事件

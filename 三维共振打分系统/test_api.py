@@ -2,11 +2,11 @@
 测试千问API调用
 """
 
-from qwen_api import QwenAPI
+from qwen_api import QwenAPI, load_api_key_from_file
 from policy_prompt import get_policy_prompt
 from datetime import datetime
 
-API_KEY = "sk-4613f6b3b3664049b0b7d808bd3c9b9a"
+API_KEY = load_api_key_from_file()
 
 print("=" * 50)
 print("测试千问API调用")

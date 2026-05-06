@@ -6,9 +6,12 @@
 import pandas as pd
 import numpy as np
 import os
+import logging
 from typing import Dict, Any, Optional
 from datetime import datetime, timedelta
 import time
+
+logger = logging.getLogger(__name__)
 
 
 class ZhongZhengData:
@@ -40,9 +43,9 @@ class ZhongZhengData:
                 self.ts = ts.pro_api()
             else:
                 self.ts = ts
-            print("tushare导入成功")
+            logger.info("tushare导入成功")
         except ImportError:
-            print("警告: tushare未安装，将使用备用方法")
+            logger.warning("tushare未安装，将使用备用方法")
             self.ts = None
     
     def _get_cache_file_path(self) -> str:
@@ -64,10 +67,10 @@ class ZhongZhengData:
         try:
             df = pd.read_csv(cache_file)
             df['date'] = pd.to_datetime(df['date'])
-            print(f"从本地缓存加载了{len(df)}条数据")
+            logger.info(f"从本地缓存加载了{len(df)}条数据")
             return df
         except Exception as e:
-            print(f"读取缓存失败: {e}")
+            logger.warning(f"读取缓存失败: {e}")
             return None
     
     def _save_to_cache(self, df: pd.DataFrame) -> bool:
@@ -84,10 +87,10 @@ class ZhongZhengData:
         
         try:
             df.to_csv(cache_file, index=False)
-            print(f"数据已保存到本地缓存: {cache_file}")
+            logger.info(f"数据已保存到本地缓存: {cache_file}")
             return True
         except Exception as e:
-            print(f"保存缓存失败: {e}")
+            logger.warning(f"保存缓存失败: {e}")
             return False
     
     def _get_latest_date_from_cache(self) -> Optional[str]:
@@ -109,7 +112,7 @@ class ZhongZhengData:
             latest_date = pd.to_datetime(df['date']).max()
             return latest_date.strftime('%Y-%m-%d')
         except Exception as e:
-            print(f"获取缓存最新日期失败: {e}")
+            logger.warning(f"获取缓存最新日期失败: {e}")
             return None
     
     def _is_today_data_available(self) -> bool:
@@ -139,7 +142,7 @@ class ZhongZhengData:
         # 尝试tushare pro接口
         if self.ts and hasattr(self.ts, 'pro_bar'):
             try:
-                print("尝试使用tushare pro接口获取数据...")
+                logger.info("尝试使用tushare pro接口获取数据...")
                 
                 # 计算日期范围
                 end_date = datetime.now()
@@ -172,16 +175,16 @@ class ZhongZhengData:
                     df['change_amount'] = df['close'].diff()
                     df['amplitude'] = (df['high'] - df['low']) / df['low'] * 100
                     
-                    print(f"成功从API获取{len(df)}条数据")
+                    logger.info(f"成功从API获取{len(df)}条数据")
                     return df
                     
             except Exception as e:
-                print(f"tushare pro接口失败: {e}")
+                logger.warning(f"tushare pro接口失败: {e}")
         
         # 尝试tushare免费接口
         if self.ts and hasattr(self.ts, 'get_k_data'):
             try:
-                print("尝试使用tushare免费接口获取数据...")
+                logger.info("尝试使用tushare免费接口获取数据...")
                 
                 df = self.ts.get_k_data(
                     code=self.index_code.replace('.SH', ''),
@@ -204,11 +207,11 @@ class ZhongZhengData:
                     df['change_amount'] = df['close'].diff()
                     df['amplitude'] = (df['high'] - df['low']) / df['low'] * 100
                     
-                    print(f"成功从API获取{len(df)}条数据")
+                    logger.info(f"成功从API获取{len(df)}条数据")
                     return df
                     
             except Exception as e:
-                print(f"tushare免费接口失败: {e}")
+                logger.warning(f"tushare免费接口失败: {e}")
         
         return pd.DataFrame()
     
@@ -232,15 +235,14 @@ class ZhongZhengData:
                 latest_date = cached_df['date'].max().strftime('%Y-%m-%d')
                 
                 if latest_date == today:
-                    print(f"本地缓存已包含今天({today})的数据，直接使用缓存")
-                    # 返回最近days天的数据
+                    logger.info(f"本地缓存已包含今天({today})的数据，直接使用缓存")
                     return cached_df.tail(days).reset_index(drop=True)
                 else:
-                    print(f"本地缓存最新日期为{latest_date}，需要更新数据")
+                    logger.info(f"本地缓存最新日期为{latest_date}，需要更新数据")
             else:
-                print("本地缓存不存在，需要从API获取数据")
+                logger.info("本地缓存不存在，需要从API获取数据")
         else:
-            print("强制更新模式，从API获取最新数据")
+            logger.info("强制更新模式，从API获取最新数据")
         
         # 从API获取数据
         df = self._fetch_data_from_tushare(days=days)
@@ -253,11 +255,11 @@ class ZhongZhengData:
         # API获取失败，尝试使用缓存数据（即使不是最新的）
         cached_df = self._load_from_cache()
         if cached_df is not None and not cached_df.empty:
-            print("API获取失败，使用本地缓存数据（可能不是最新的）")
+            logger.warning("API获取失败，使用本地缓存数据（可能不是最新的）")
             return cached_df.tail(days).reset_index(drop=True)
         
         # 所有方法都失败
-        print("所有数据源都失败，返回空数据")
+        logger.error("所有数据源都失败，返回空数据")
         return pd.DataFrame()
     
     def calculate_ma(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -371,10 +373,9 @@ class ZhongZhengData:
                 "details": {"error": "未能获取中证全指数据"}
             }
         
-        # 计算均线
-        df = self.calculate_ma(df)
+        if 'MA10' not in df.columns or 'MA20' not in df.columns:
+            df = self.calculate_ma(df)
         
-        # 获取最新数据
         latest = df.iloc[-1]
         latest_close = latest['close']
         latest_ma10 = latest['MA10']
@@ -445,6 +446,8 @@ class ZhongZhengData:
                 "success": False,
                 "error": "未能获取中证全指数据，请检查网络连接或数据源配置"
             }
+        
+        df = self.calculate_ma(df)
         
         capital_analysis = self.analyze_capital_score(df)
         technical_analysis = self.analyze_technical_score(df)

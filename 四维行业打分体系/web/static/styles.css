@@ -901,6 +901,116 @@ body {
     border-top: 2px solid #e9ecef;
 }
 
+/* 数据源配置卡片 */
+.data-source-card {
+    border-color: #17a2b8;
+    background: linear-gradient(to bottom right, #fff, #f0f9ff);
+}
+
+.data-source-card h2 {
+    border-left-color: #17a2b8;
+}
+
+.input-with-button {
+    display: flex;
+    gap: 8px;
+}
+
+.input-with-button input {
+    flex: 1;
+}
+
+.connection-status {
+    margin-top: 15px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.status-loading {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+}
+
+.status-success {
+    background: #d4edda;
+    border: 1px solid #28a745;
+    color: #155724;
+}
+
+.status-error {
+    background: #f8d7da;
+    border: 1px solid #dc3545;
+    color: #721c24;
+}
+
+.fetch-status {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.fetch-loading {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+}
+
+.fetch-success {
+    background: #d4edda;
+    border: 1px solid #28a745;
+    color: #155724;
+}
+
+.fetch-error {
+    background: #f8d7da;
+    border: 1px solid #dc3545;
+    color: #721c24;
+}
+
+.fetch-warning {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+}
+
+.fetch-info {
+    background: #d1ecf1;
+    border: 1px solid #17a2b8;
+    color: #0c5460;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid #667eea;
+    color: #667eea;
+    font-size: 13px;
+    padding: 6px 14px;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+}
+
+.dim-hint {
+    font-size: 0.55em;
+    font-weight: normal;
+    color: #6c757d;
+    margin-left: 8px;
+}
+
+.card h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
     body {
