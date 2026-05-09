@@ -46,11 +46,15 @@ def analyze():
     global latest_result
     
     try:
+        # 获取请求参数
+        data = request.get_json(silent=True) or {}
+        force_update = data.get('force_update', False)
+        
         # 创建打分系统实例
         scoring_system = ThreeDimensionalScoringSystem(API_KEY)
         
         # 运行完整分析
-        result = scoring_system.run_full_analysis()
+        result = scoring_system.run_full_analysis(force_update=force_update)
         latest_result = result
         
         return jsonify({
@@ -210,12 +214,15 @@ def get_kline_data():
 if __name__ == '__main__':
     import webbrowser
     import threading
-    
+    import os
+
     def open_browser():
         webbrowser.open('http://127.0.0.1:5000')
-    
+
     logger.info("启动三维共振打分系统...")
     logger.info("访问地址: http://127.0.0.1:5000")
-    
-    threading.Timer(1.5, open_browser).start()
+
+    # 仅在非 reloader 进程中打开浏览器，避免 debug 模式下打开两次
+    if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+        threading.Timer(1.5, open_browser).start()
     app.run(debug=True, host='0.0.0.0', port=5000)

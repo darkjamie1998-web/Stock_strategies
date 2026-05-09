@@ -113,13 +113,14 @@ class QwenAPI:
             logger.warning(f"保存缓存失败: {e}")
             return False
     
-    def analyze_policy(self, prompt: str, current_date: Optional[str] = None) -> Dict[str, Any]:
+    def analyze_policy(self, prompt: str, current_date: Optional[str] = None, force_update: bool = False) -> Dict[str, Any]:
         """
         调用千问API分析政策面，优先使用本地缓存
         
         Args:
             prompt: 提示词
             current_date: 当前日期，用于缓存
+            force_update: 是否强制更新，忽略本地缓存
             
         Returns:
             包含分析结果和得分的字典
@@ -128,11 +129,14 @@ class QwenAPI:
         if current_date is None:
             current_date = datetime.now().strftime("%Y-%m-%d")
         
-        # 首先检查本地缓存
-        cached_result = self._load_from_cache(current_date)
-        if cached_result:
-            logger.info(f"使用本地缓存的政策面分析数据 ({current_date})")
-            return cached_result
+        # 首先检查本地缓存（非强制更新模式下）
+        if not force_update:
+            cached_result = self._load_from_cache(current_date)
+            if cached_result:
+                logger.info(f"使用本地缓存的政策面分析数据 ({current_date})")
+                return cached_result
+        else:
+            logger.info(f"强制更新模式，忽略本地缓存 ({current_date})")
         
         logger.info(f"本地缓存不存在，调用千问API获取政策面分析 ({current_date})")
         
@@ -299,12 +303,13 @@ class QwenAPI:
                 "error": f"未知错误: {str(e)}"
             }
     
-    def get_policy_score(self, current_date: Optional[str] = None) -> Dict[str, Any]:
+    def get_policy_score(self, current_date: Optional[str] = None, force_update: bool = False) -> Dict[str, Any]:
         """
         获取政策面评分（便捷方法）
         
         Args:
             current_date: 当前日期，默认为今天
+            force_update: 是否强制更新，忽略本地缓存
             
         Returns:
             政策面评分结果
@@ -315,7 +320,7 @@ class QwenAPI:
             current_date = datetime.now().strftime("%Y-%m-%d")
             
         prompt = get_policy_prompt(current_date)
-        return self.analyze_policy(prompt, current_date)
+        return self.analyze_policy(prompt, current_date, force_update=force_update)
 
 
 def load_api_key_from_file(file_path: str = "qwen_token.txt") -> str:

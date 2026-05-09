@@ -38,15 +38,18 @@ class ThreeDimensionalScoringSystem:
         self.qwen_client = QwenAPI(api_key, cache_dir=cache_dir)
         self.market_analyzer = ZhongZhengData(cache_dir=cache_dir)
         
-    def calculate_policy_score(self) -> Dict[str, Any]:
+    def calculate_policy_score(self, force_update: bool = False) -> Dict[str, Any]:
         """
         计算政策面得分（自动使用本地缓存）
         
+        Args:
+            force_update: 是否强制更新，忽略本地缓存
+            
         Returns:
             政策面评分结果
         """
         logger.info("正在分析政策面...")
-        result = self.qwen_client.get_policy_score()
+        result = self.qwen_client.get_policy_score(force_update=force_update)
         
         if result["success"]:
             return {
@@ -122,7 +125,7 @@ class ThreeDimensionalScoringSystem:
         logger.info("=" * 50)
         
         # 计算各维度得分
-        policy_result = self.calculate_policy_score()
+        policy_result = self.calculate_policy_score(force_update=force_update)
         
         # 资金和技术面使用相同的市场数据，避免重复获取
         logger.info("正在获取市场数据...")

@@ -14,6 +14,31 @@ import time
 logger = logging.getLogger(__name__)
 
 
+def load_tushare_token(file_path: str = "tushare_token.txt") -> Optional[str]:
+    """
+    从文件加载tushare token
+    
+    Args:
+        file_path: 存储token的文件路径，默认为"tushare_token.txt"
+        
+    Returns:
+        token字符串，如果文件不存在或无效则返回None
+    """
+    if not os.path.exists(file_path):
+        return None
+    
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    return line
+    except Exception as e:
+        logger.warning(f"读取tushare token文件失败: {e}")
+    
+    return None
+
+
 class ZhongZhengData:
     """中证全指数据获取类"""
     
@@ -22,12 +47,13 @@ class ZhongZhengData:
         初始化
         
         Args:
-            token: tushare token，如果不提供则使用免费接口
+            token: tushare token，如果不提供则尝试从tushare_token.txt读取
             cache_dir: 缓存目录，默认为"data"
         """
         self.index_code = "000985.SH"  # 中证全指代码（tushare格式）
         self.index_name = "中证全指"
-        self.token = token
+        # 如果没有传入token，尝试从文件读取
+        self.token = token or load_tushare_token()
         self.ts = None
         self.cache_dir = cache_dir
         
@@ -38,15 +64,26 @@ class ZhongZhengData:
         # 尝试导入tushare
         try:
             import tushare as ts
-            if token:
-                ts.set_token(token)
+            if self.token:
+                ts.set_token(self.token)
                 self.ts = ts.pro_api()
+                logger.info("tushare已使用token初始化pro_api")
             else:
                 self.ts = ts
-            logger.info("tushare导入成功")
+                logger.info("tushare未使用token，将使用免费接口")
         except ImportError:
             logger.warning("tushare未安装，将使用备用方法")
             self.ts = None
+        
+        # 尝试导入akshare
+        self.ak = None
+        try:
+            import akshare as ak
+            self.ak = ak
+            logger.info("akshare已成功导入")
+        except Exception as e:
+            logger.warning(f"akshare导入失败: {e}")
+            self.ak = None
     
     def _get_cache_file_path(self) -> str:
         """获取缓存文件路径"""
@@ -129,6 +166,69 @@ class ZhongZhengData:
         today = datetime.now().strftime('%Y-%m-%d')
         return latest_date == today
     
+    def _fetch_data_from_akshare(self, days: int = 90) -> pd.DataFrame:
+        """
+        从akshare获取数据
+        
+        Args:
+            days: 获取天数
+            
+        Returns:
+            DataFrame
+        """
+        if self.ak is None:
+            logger.warning("akshare未初始化")
+            return pd.DataFrame()
+        
+        try:
+            logger.info("尝试使用akshare接口获取数据...")
+            
+            # 计算日期范围
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days + 10)
+            
+            # 使用akshare东方财富接口获取中证全指数据（数据更新到最新）
+            df = self.ak.stock_zh_index_daily_em(symbol="sh000985")
+            
+            if df is not None and not df.empty:
+                # 转换日期格式
+                df['date'] = pd.to_datetime(df['date'])
+                
+                # 筛选日期范围
+                df = df[df['date'] >= pd.Timestamp(start_date)].reset_index(drop=True)
+                
+                # 确保列名一致
+                df = df.rename(columns={
+                    'open': 'open',
+                    'high': 'high',
+                    'low': 'low',
+                    'close': 'close',
+                    'volume': 'volume'
+                })
+                
+                # 确保数值类型正确
+                for col in ['open', 'high', 'low', 'close', 'volume']:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+                
+                # 添加amount列（如果不存在）
+                if 'amount' not in df.columns:
+                    df['amount'] = 0.0
+                
+                df = df[['date', 'open', 'high', 'low', 'close', 'volume', 'amount']]
+                
+                # 计算涨跌幅
+                df['pct_change'] = df['close'].pct_change() * 100
+                df['change_amount'] = df['close'].diff()
+                df['amplitude'] = (df['high'] - df['low']) / df['low'] * 100
+                
+                logger.info(f"成功从akshare获取{len(df)}条数据")
+                return df
+                
+        except Exception as e:
+            logger.warning(f"akshare接口失败: {e}")
+        
+        return pd.DataFrame()
+    
     def _fetch_data_from_tushare(self, days: int = 90) -> pd.DataFrame:
         """
         从tushare获取数据
@@ -139,8 +239,8 @@ class ZhongZhengData:
         Returns:
             DataFrame
         """
-        # 尝试tushare pro接口
-        if self.ts and hasattr(self.ts, 'pro_bar'):
+        # 尝试tushare pro接口 (query方式)
+        if self.ts and hasattr(self.ts, 'query'):
             try:
                 logger.info("尝试使用tushare pro接口获取数据...")
                 
@@ -148,12 +248,11 @@ class ZhongZhengData:
                 end_date = datetime.now()
                 start_date = end_date - timedelta(days=days + 10)
                 
-                df = self.ts.pro_bar(
+                df = self.ts.query(
+                    'index_daily',
                     ts_code=self.index_code,
-                    asset='I',
                     start_date=start_date.strftime('%Y%m%d'),
-                    end_date=end_date.strftime('%Y%m%d'),
-                    freq='D'
+                    end_date=end_date.strftime('%Y%m%d')
                 )
                 
                 if df is not None and not df.empty:
@@ -168,6 +267,10 @@ class ZhongZhengData:
                         'amount': 'amount'
                     })
                     
+                    # 确保数值类型正确
+                    for col in ['open', 'high', 'low', 'close', 'volume', 'amount']:
+                        df[col] = pd.to_numeric(df[col], errors='coerce')
+                    
                     df = df[['date', 'open', 'high', 'low', 'close', 'volume', 'amount']]
                     df['volume'] = df['volume'] * 100
                     
@@ -181,39 +284,9 @@ class ZhongZhengData:
             except Exception as e:
                 logger.warning(f"tushare pro接口失败: {e}")
         
-        # 尝试tushare免费接口
-        if self.ts and hasattr(self.ts, 'get_k_data'):
-            try:
-                logger.info("尝试使用tushare免费接口获取数据...")
-                
-                df = self.ts.get_k_data(
-                    code=self.index_code.replace('.SH', ''),
-                    ktype='D',
-                    autype='qfq'
-                )
-                
-                if df is not None and not df.empty:
-                    df['date'] = pd.to_datetime(df['date'])
-                    df = df.rename(columns={
-                        'open': 'open',
-                        'high': 'high',
-                        'low': 'low',
-                        'close': 'close',
-                        'volume': 'volume'
-                    })
-                    
-                    df['amount'] = df['volume'] * df['close']
-                    df['pct_change'] = df['close'].pct_change() * 100
-                    df['change_amount'] = df['close'].diff()
-                    df['amplitude'] = (df['high'] - df['low']) / df['low'] * 100
-                    
-                    logger.info(f"成功从API获取{len(df)}条数据")
-                    return df
-                    
-            except Exception as e:
-                logger.warning(f"tushare免费接口失败: {e}")
-        
-        return pd.DataFrame()
+        # tushare失败，尝试使用akshare
+        logger.info("tushare获取失败，尝试使用akshare...")
+        return self._fetch_data_from_akshare(days=days)
     
     def get_index_data(self, days: int = 90, force_update: bool = False) -> pd.DataFrame:
         """
