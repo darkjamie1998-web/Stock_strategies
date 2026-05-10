@@ -650,6 +650,11 @@ class StockStrategyApp:
 
         @self.app.callback(
             Output('scan-state-store', 'data', allow_duplicate=True),
+            Output('scan-results', 'children', allow_duplicate=True),
+            Output('scan-progress', 'children', allow_duplicate=True),
+            Output('scan-poll-interval', 'disabled', allow_duplicate=True),
+            Output('start-scan', 'style', allow_duplicate=True),
+            Output('stop-scan', 'style', allow_duplicate=True),
             Input('stop-scan', 'n_clicks'),
             prevent_initial_call=True
         )
@@ -658,7 +663,72 @@ class StockStrategyApp:
                 self._scanner.request_stop()
                 self._scan_stopped = True
                 self._scan_running = False
-            return {'running': False}
+
+            start_style = {'marginTop': '20px', 'width': '100%', 'display': 'block'}
+            stop_style = {'marginTop': '10px', 'width': '100%', 'display': 'none'}
+
+            results = self._scan_results or []
+            self._last_scan_results = results
+
+            if not results:
+                msg = html.Div([
+                    html.P("⏹ 扫描已终止，未发现任何信号",
+                           style={'textAlign': 'center', 'color': '#f6ad55', 'padding': '20px', 'fontSize': '14px'})
+                ])
+                return {'running': False}, msg, "扫描已终止（无信号）", True, start_style, stop_style
+
+            total_stocks = len(results)
+            total_signals = sum(r.total_signals for r in results)
+            buy_total = sum(r.buy_count for r in results)
+            add_total = sum(r.add_count for r in results)
+            exit_total = sum(r.exit_count for r in results)
+            profit_total = sum(r.profit_count for r in results)
+
+            summary = html.Div([
+                html.Div([
+                    html.Span('⏹ 扫描已终止（部分结果）', style={'color': '#f6ad55', 'fontWeight': 'bold', 'fontSize': '14px', 'marginRight': '15px'}),
+                    html.Span(f"共 {total_stocks} 只股票触发信号", style={'color': '#4a90e2', 'fontWeight': 'bold', 'fontSize': '14px'}),
+                    html.Span(f" | 总信号数: {total_signals}", style={'color': '#a0aec0', 'fontSize': '13px', 'marginLeft': '15px'}),
+                    html.Span(f" | 买入: {buy_total}", style={'color': '#f56565', 'fontSize': '13px', 'marginLeft': '10px'}),
+                    html.Span(f" | 加码: {add_total}", style={'color': '#f6ad55', 'fontSize': '13px', 'marginLeft': '10px'}),
+                    html.Span(f" | 离场: {exit_total}", style={'color': '#48bb78', 'fontSize': '13px', 'marginLeft': '10px'}),
+                    html.Span(f" | 止盈: {profit_total}", style={'color': '#9f7aea', 'fontSize': '13px', 'marginLeft': '10px'}),
+                ], style={'marginBottom': '15px', 'paddingBottom': '10px', 'borderBottom': '1px solid #2d3748'})
+            ])
+
+            table_header = html.Div([
+                html.Div("股票代码", style={'flex': '1', 'fontWeight': 'bold', 'color': '#4a90e2', 'fontSize': '13px'}),
+                html.Div("股票名称", style={'flex': '1.5', 'fontWeight': 'bold', 'color': '#4a90e2', 'fontSize': '13px'}),
+                html.Div("买入", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#f56565', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("加码", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#f6ad55', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("离场", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#48bb78', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("止盈", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#9f7aea', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("总计", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#e0e0e0', 'fontSize': '13px', 'textAlign': 'center'}),
+            ], style={'display': 'flex', 'padding': '8px 0', 'borderBottom': '1px solid #2d3748', 'marginBottom': '5px'})
+
+            rows = []
+            for r in results:
+                bg = '#1e2d4a' if results.index(r) % 2 == 0 else 'transparent'
+                rows.append(html.Div([
+                    html.Div(r.stock_code, style={'flex': '1', 'fontSize': '12px', 'color': '#e0e0e0'}),
+                    html.Div(r.stock_name, style={'flex': '1.5', 'fontSize': '12px', 'color': '#a0aec0'}),
+                    html.Div(str(r.buy_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#f56565', 'textAlign': 'center'}),
+                    html.Div(str(r.add_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#f6ad55', 'textAlign': 'center'}),
+                    html.Div(str(r.exit_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#48bb78', 'textAlign': 'center'}),
+                    html.Div(str(r.profit_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#9f7aea', 'textAlign': 'center'}),
+                    html.Div(str(r.total_signals), style={'flex': '0.6', 'fontSize': '12px', 'color': '#e0e0e0', 'textAlign': 'center', 'fontWeight': 'bold'}),
+                ], style={'display': 'flex', 'padding': '6px 0', 'backgroundColor': bg, 'borderRadius': '4px'}))
+
+            export_btn = html.Button('📥 导出CSV', id='export-scan-csv', n_clicks=0,
+                                     style={
+                                         'marginTop': '10px', 'padding': '8px 20px',
+                                         'backgroundColor': '#48bb78', 'color': '#fff',
+                                         'border': 'none', 'borderRadius': '4px',
+                                         'cursor': 'pointer', 'fontSize': '13px',
+                                         'fontWeight': 'bold'
+                                     })
+
+            return {'running': False}, html.Div([summary, export_btn, table_header] + rows), "扫描已终止（部分结果）", True, start_style, stop_style
 
         @self.app.callback(
             Output('download-scan-csv', 'data'),

@@ -13,6 +13,7 @@
     - 更好的错误处理和日志
 """
 import logging
+import os
 import webbrowser
 import threading
 
@@ -31,7 +32,8 @@ def main():
         app = create_app()
         
         url = 'http://127.0.0.1:8050'
-        threading.Timer(1.5, lambda: webbrowser.open(url)).start()
+        if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+            threading.Timer(1.5, lambda: webbrowser.open(url)).start()
         
         logger.info(f"应用启动成功，浏览器将自动打开 {url}")
         app.run(debug=True, port=8050)
