@@ -22,8 +22,34 @@ class ChartService:
         self.chart_height = UI_CONFIG.CHART_HEIGHT
     
     def create_price_chart(self, df: pd.DataFrame, signals: List[TradingSignal],
-                          stock_name: str = "") -> go.Figure:
+                          stock_name: str = "",
+                          start_date: Optional[str] = None,
+                          end_date: Optional[str] = None) -> go.Figure:
         """创建价格走势图"""
+        if start_date is not None:
+            start_dt = pd.Timestamp(start_date)
+            df = df[df['date'] >= start_dt].copy()
+            signals = [s for s in signals if s.timestamp >= start_dt]
+        if end_date is not None:
+            end_dt = pd.Timestamp(end_date)
+            df = df[df['date'] <= end_dt].copy()
+            signals = [s for s in signals if s.timestamp <= end_dt]
+
+        if df.empty:
+            fig = go.Figure()
+            fig.add_annotation(
+                text="所选日期范围内无数据",
+                xref="paper", yref="paper", x=0.5, y=0.5,
+                showarrow=False, font=dict(size=16, color="#a0aec0")
+            )
+            fig.update_layout(
+                plot_bgcolor=self.theme['card_background'],
+                paper_bgcolor=self.theme['background_color'],
+                font_color=self.theme['text_color'],
+                height=self.chart_height
+            )
+            return fig
+
         fig = make_subplots(
             rows=2, cols=1,
             shared_xaxes=True,
@@ -32,11 +58,9 @@ class ChartService:
             subplot_titles=(f'{stock_name} 价格走势', '成交量')
         )
         
-        # 使用连续索引作为x轴，跳过非交易日
         df = df.reset_index(drop=True)
         x_indices = list(range(len(df)))
         
-        # 创建日期到索引的映射，用于信号标记
         date_to_idx = {row['date']: idx for idx, row in df.iterrows()}
         
         # 添加K线图

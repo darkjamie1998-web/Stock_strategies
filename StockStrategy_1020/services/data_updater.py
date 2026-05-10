@@ -19,9 +19,10 @@ logger = logging.getLogger(__name__)
 class StockDataUpdater:
     """股票数据更新器"""
     
-    def __init__(self, data_dir: Optional[str] = None):
+    def __init__(self, data_dir: Optional[str] = None, custom_start_date: Optional[str] = None):
         self.data_dir = data_dir or PATH_CONFIG.DATA_DIR
         self.today = datetime.now().strftime('%Y%m%d')
+        self.custom_start_date = custom_start_date
         self.updated_count = 0
         self.failed_stocks = []
         self._stop_requested = False
@@ -178,71 +179,111 @@ class StockDataUpdater:
             stock_code = stock_info['code']
             stock_name = stock_info['name']
             current_end_date = stock_info['end_date']
+            current_start_date = stock_info['start_date']
             filepath = stock_info['filepath']
-            
-            # 检查是否需要更新（字符串比较）
-            if current_end_date >= self.today:
-                logger.debug(f"{stock_code} {stock_name} 数据已是最新 ({current_end_date} >= {self.today})")
-                return True
-            
-            logger.info(f"更新 {stock_code} {stock_name}，当前截止日期: {current_end_date}")
-            
-            # 读取现有数据
+
             existing_df = self.read_existing_data(filepath)
             if existing_df is None or existing_df.empty:
                 logger.error(f"无法读取现有数据或数据为空: {filepath}")
                 return False
-            
-            # 计算需要更新的日期范围
-            last_date = existing_df['date'].max()
-            if pd.isna(last_date):
-                logger.error(f"现有数据日期为空: {filepath}")
-                return False
-            
-            new_start_date = (last_date + timedelta(days=1)).strftime('%Y%m%d')
-            new_end_date = self.today
-            
-            if new_start_date > new_end_date:
-                logger.debug(f"{stock_code} 无需更新 ({new_start_date} > {new_end_date})")
+
+            existing_earliest = existing_df['date'].min()
+            existing_latest = existing_df['date'].max()
+
+            if self.custom_start_date:
+                custom_start_dt = pd.Timestamp(datetime.strptime(self.custom_start_date, '%Y%m%d'))
+                today_dt = pd.Timestamp(datetime.strptime(self.today, '%Y%m%d'))
+
+                need_backward_fetch = custom_start_dt < existing_earliest
+                need_forward_fetch = today_dt > existing_latest
+
+                if not need_backward_fetch and not need_forward_fetch:
+                    logger.debug(f"{stock_code} 数据已覆盖 {self.custom_start_date} ~ {self.today}，无需更新")
+                    return True
+
+                frames_to_concat = []
+
+                if need_backward_fetch:
+                    backward_start = self.custom_start_date
+                    backward_end = (existing_earliest - timedelta(days=1)).strftime('%Y%m%d')
+                    logger.info(f"{stock_code} 向前扩展: {backward_start} ~ {backward_end}")
+                    backward_df = self.fetch_tushare_data(stock_code, stock_name, backward_start, backward_end)
+                    if not backward_df.empty:
+                        frames_to_concat.append(backward_df)
+
+                frames_to_concat.append(existing_df)
+
+                if need_forward_fetch:
+                    forward_start = (existing_latest + timedelta(days=1)).strftime('%Y%m%d')
+                    forward_end = self.today
+                    logger.info(f"{stock_code} 向后更新: {forward_start} ~ {forward_end}")
+                    forward_df = self.fetch_tushare_data(stock_code, stock_name, forward_start, forward_end)
+                    if not forward_df.empty:
+                        frames_to_concat.append(forward_df)
+
+                combined_df = pd.concat(frames_to_concat, ignore_index=True)
+                combined_df = combined_df.drop_duplicates(subset=['date'], keep='first')
+                combined_df = combined_df.sort_values('date')
+
+                combined_df['ma5'] = combined_df['close'].rolling(window=5, min_periods=1).mean().round(2)
+                combined_df['ma10'] = combined_df['close'].rolling(window=10, min_periods=1).mean().round(2)
+                combined_df['ma20'] = combined_df['close'].rolling(window=20, min_periods=1).mean().round(2)
+
+                combined_df['date'] = combined_df['date'].dt.strftime('%Y-%m-%d')
+
+                new_filename = f"{stock_code}_{stock_name}_tushare_{self.custom_start_date}_{self.today}.csv"
+                new_filepath = os.path.join(self.data_dir, new_filename)
+
+                combined_df.to_csv(new_filepath, index=False)
+
+                if os.path.exists(filepath) and os.path.abspath(filepath) != os.path.abspath(new_filepath):
+                    os.remove(filepath)
+                    logger.info(f"删除旧文件: {filepath}")
+
+                logger.info(f"成功更新 {stock_code} {stock_name}，新文件: {new_filename}")
                 return True
-            
-            # 从tushare API获取新数据
-            logger.info(f"获取 {stock_code} 从 {new_start_date} 到 {new_end_date} 的数据")
-            new_df = self.fetch_tushare_data(stock_code, stock_name, new_start_date, new_end_date)
-            
-            if new_df.empty:
-                logger.warning(f"{stock_code} 没有新数据")
+
+            else:
+                if current_end_date >= self.today:
+                    logger.debug(f"{stock_code} {stock_name} 数据已是最新 ({current_end_date} >= {self.today})")
+                    return True
+
+                new_start_date = (existing_latest + timedelta(days=1)).strftime('%Y%m%d')
+                new_end_date = self.today
+
+                if new_start_date > new_end_date:
+                    logger.debug(f"{stock_code} 无需更新 ({new_start_date} > {new_end_date})")
+                    return True
+
+                logger.info(f"获取 {stock_code} 从 {new_start_date} 到 {new_end_date} 的数据")
+                new_df = self.fetch_tushare_data(stock_code, stock_name, new_start_date, new_end_date)
+
+                if new_df.empty:
+                    logger.warning(f"{stock_code} 没有新数据")
+                    return True
+
+                combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+                combined_df = combined_df.drop_duplicates(subset=['date'], keep='first')
+                combined_df = combined_df.sort_values('date')
+
+                combined_df['ma5'] = combined_df['close'].rolling(window=5, min_periods=1).mean().round(2)
+                combined_df['ma10'] = combined_df['close'].rolling(window=10, min_periods=1).mean().round(2)
+                combined_df['ma20'] = combined_df['close'].rolling(window=20, min_periods=1).mean().round(2)
+
+                combined_df['date'] = combined_df['date'].dt.strftime('%Y-%m-%d')
+
+                new_filename = f"{stock_code}_{stock_name}_tushare_{current_start_date}_{self.today}.csv"
+                new_filepath = os.path.join(self.data_dir, new_filename)
+
+                combined_df.to_csv(new_filepath, index=False)
+
+                if os.path.exists(filepath) and os.path.abspath(filepath) != os.path.abspath(new_filepath):
+                    os.remove(filepath)
+                    logger.info(f"删除旧文件: {filepath}")
+
+                logger.info(f"成功更新 {stock_code} {stock_name}，新文件: {new_filename}")
                 return True
-            
-            # 合并数据
-            combined_df = pd.concat([existing_df, new_df], ignore_index=True)
-            combined_df = combined_df.drop_duplicates(subset=['date'], keep='first')
-            combined_df = combined_df.sort_values('date')
-            
-            # 重新计算均线
-            combined_df['ma5'] = combined_df['close'].rolling(window=5, min_periods=1).mean().round(2)
-            combined_df['ma10'] = combined_df['close'].rolling(window=10, min_periods=1).mean().round(2)
-            combined_df['ma20'] = combined_df['close'].rolling(window=20, min_periods=1).mean().round(2)
-            
-            # 转换日期为字符串格式用于保存
-            combined_df['date'] = combined_df['date'].dt.strftime('%Y-%m-%d')
-            
-            # 生成新文件名
-            original_start = stock_info['start_date']
-            new_filename = f"{stock_code}_{stock_name}_tushare_{original_start}_{self.today}.csv"
-            new_filepath = os.path.join(self.data_dir, new_filename)
-            
-            # 保存数据
-            combined_df.to_csv(new_filepath, index=False)
-            
-            # 删除旧文件
-            if os.path.exists(filepath) and filepath != new_filepath:
-                os.remove(filepath)
-                logger.info(f"删除旧文件: {filepath}")
-            
-            logger.info(f"成功更新 {stock_code} {stock_name}，新文件: {new_filename}")
-            return True
-            
+
         except Exception as e:
             logger.error(f"更新 {stock_info.get('code', 'unknown')} 失败: {e}")
             self.failed_stocks.append(stock_info)

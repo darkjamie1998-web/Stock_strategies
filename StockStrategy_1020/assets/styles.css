@@ -148,6 +148,24 @@ body {
     box-shadow: 0 4px 12px rgba(246, 173, 85, 0.4);
 }
 
+.btn-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
+}
+
 .result-box {
     background-color: #1a1a2e;
     border: 1px solid #4a90e2;
@@ -277,6 +295,11 @@ input[type="number"]::-webkit-outer-spin-button:hover {
     background-color: #ffffff !important;
     border: 1px solid #2d3748;
     border-radius: 4px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .Select-option {

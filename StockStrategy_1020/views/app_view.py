@@ -10,7 +10,9 @@ import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import dash
 import logging
+from datetime import date
 from typing import List, Dict, Any, Optional
 
 from config import UI_CONFIG, TRADING_CONFIG
@@ -30,11 +32,21 @@ class StockStrategyApp:
         self.app = dash.Dash(__name__, 
                             external_stylesheets=['/assets/styles.css'],
                             assets_folder=assets_path,
-                            assets_url_path='assets')
+                            assets_url_path='assets',
+                            suppress_callback_exceptions=True)
         self.data_service = DataService()
         self.strategy_service = StrategyService()
         self.chart_service = ChartService()
         self.theme = UI_CONFIG.THEME
+        
+        self._scanner = None
+        self._scan_results = None
+        self._scan_running = False
+        self._scan_stopped = False
+        self._scan_progress_text = ""
+        self._scan_progress_current = 0
+        self._scan_progress_total = 0
+        self._last_scan_results = []
         
         self._setup_layout()
         self._setup_callbacks()
@@ -56,6 +68,10 @@ class StockStrategyApp:
             
             # 隐藏的存储组件
             html.Div(id='update-params-store', style={'display': 'none'}),
+            
+            dcc.Store(id='scan-state-store', data={'running': False}),
+            dcc.Interval(id='scan-poll-interval', interval=500, disabled=True),
+            dcc.Download(id='download-scan-csv'),
             
             # 页脚
             html.Footer(
@@ -85,19 +101,14 @@ class StockStrategyApp:
     def _create_control_panel(self) -> html.Div:
         """创建控制面板"""
         return html.Div([
-            # 股票选择
             self._create_stock_selector(),
-            
-            # 策略参数
             self._create_strategy_params(),
-            
-            # 策略说明
-            self._create_strategy_guide()
+            self._create_strategy_guide(),
+            self._create_signal_scanner()
         ], style={'width': '35%', 'padding': '20px', 'flex': '0 0 auto'})
     
     def _create_stock_selector(self) -> html.Div:
         """创建股票选择器"""
-        # 初始加载部分股票
         initial_stocks = self.data_service.get_stock_list(limit=UI_CONFIG.DROPDOWN_BATCH_SIZE)
         accent_color = self.theme['accent_color']
         
@@ -121,6 +132,26 @@ class StockStrategyApp:
                             'color': '#000000',
                             'backgroundColor': '#ffffff'
                         }
+                    )
+                ], className='control-group'),
+                html.Div([
+                    html.Label("图表起始日期", className='control-label', style={'color': '#a0aec0', 'fontSize': '14px', 'marginBottom': '8px', 'display': 'block'}),
+                    dcc.DatePickerSingle(
+                        id='chart-start-date',
+                        date=None,
+                        placeholder='选择起始日期',
+                        display_format='YYYY-MM-DD',
+                        style={'width': '100%'}
+                    )
+                ], className='control-group'),
+                html.Div([
+                    html.Label("图表结束日期", className='control-label', style={'color': '#a0aec0', 'fontSize': '14px', 'marginBottom': '8px', 'display': 'block'}),
+                    dcc.DatePickerSingle(
+                        id='chart-end-date',
+                        date=None,
+                        placeholder='选择结束日期',
+                        display_format='YYYY-MM-DD',
+                        style={'width': '100%'}
                     )
                 ], className='control-group'),
                 html.Button('🔍 生成信号', id='generate-signals', n_clicks=0,
@@ -208,11 +239,51 @@ class StockStrategyApp:
             ], style={'padding': '15px'})
         ], className='module-card', style=self._get_card_style())
     
+    def _create_signal_scanner(self) -> html.Div:
+        """创建信号扫描面板"""
+        accent_color = self.theme['accent_color']
+        return html.Div([
+            html.H3("🔎 信号扫描", className='module-title', 
+                   style={'color': accent_color, 'fontSize': '18px', 'fontWeight': 'bold', 
+                          'marginBottom': '15px', 'paddingBottom': '10px', 
+                          'paddingLeft': '5%', 'borderBottom': f'2px solid {accent_color}'}),
+            html.Div([
+                html.P("查询指定时间段内触发信号的所有股票",
+                       style={'color': '#a0aec0', 'fontSize': '12px', 'marginBottom': '15px'}),
+                html.Div([
+                    html.Label("扫描起始日期", className='control-label', style={'color': '#a0aec0', 'fontSize': '14px', 'marginBottom': '8px', 'display': 'block'}),
+                    dcc.DatePickerSingle(
+                        id='scan-start-date',
+                        date=date.today(),
+                        placeholder='选择起始日期',
+                        display_format='YYYY-MM-DD',
+                        style={'width': '100%'}
+                    )
+                ], className='control-group'),
+                html.Div([
+                    html.Label("扫描结束日期", className='control-label', style={'color': '#a0aec0', 'fontSize': '14px', 'marginBottom': '8px', 'display': 'block'}),
+                    dcc.DatePickerSingle(
+                        id='scan-end-date',
+                        date=date.today(),
+                        placeholder='选择结束日期',
+                        display_format='YYYY-MM-DD',
+                        style={'width': '100%'}
+                    )
+                ], className='control-group'),
+                html.Button('🔍 开始扫描', id='start-scan', n_clicks=0,
+                           className='btn-primary',
+                           style={'marginTop': '20px', 'width': '100%'}),
+                html.Button('⏹ 终止扫描', id='stop-scan', n_clicks=0,
+                           className='btn-danger',
+                           style={'marginTop': '10px', 'width': '100%', 'display': 'none'}),
+                html.Div(id='scan-progress', style={'marginTop': '10px', 'textAlign': 'center', 'color': '#a0aec0', 'fontSize': '13px'})
+            ], style={'padding': '15px'})
+        ], className='module-card', style=self._get_card_style())
+    
     def _create_result_panel(self) -> html.Div:
         """创建结果展示面板"""
         accent_color = self.theme['accent_color']
         return html.Div([
-            # 价格走势图
             html.Div([
                 html.H3("📊 价格走势图", className='module-title', 
                        style={'color': accent_color, 'fontSize': '18px', 'fontWeight': 'bold', 
@@ -221,7 +292,6 @@ class StockStrategyApp:
                 dcc.Graph(id='price-chart', style={'height': '500px', 'backgroundColor': '#1a1a2e'})
             ], className='module-card', style=self._get_card_style()),
 
-            # 交易信号列表
             html.Div([
                 html.H3("📈 交易信号", className='module-title', 
                        style={'color': accent_color, 'fontSize': '18px', 'fontWeight': 'bold', 
@@ -231,13 +301,21 @@ class StockStrategyApp:
                         style={'maxHeight': '600px', 'overflowY': 'auto', 'paddingRight': '10px', 'padding': '15px'})
             ], className='module-card', style=self._get_card_style()),
 
-            # 统计信息
             html.Div([
                 html.H3("📊 统计信息", className='module-title', 
                        style={'color': accent_color, 'fontSize': '18px', 'fontWeight': 'bold', 
                               'marginBottom': '15px', 'paddingBottom': '10px', 
                               'paddingLeft': '5%', 'borderBottom': f'2px solid {accent_color}'}),
                 html.Div(id='statistics-info', className='result-box', style={'padding': '15px'})
+            ], className='module-card', style=self._get_card_style()),
+
+            html.Div([
+                html.H3("🔎 扫描结果", className='module-title', 
+                       style={'color': accent_color, 'fontSize': '18px', 'fontWeight': 'bold', 
+                              'marginBottom': '15px', 'paddingBottom': '10px', 
+                              'paddingLeft': '5%', 'borderBottom': f'2px solid {accent_color}'}),
+                html.Div(id='scan-results', className='result-box',
+                         style={'maxHeight': '600px', 'overflowY': 'auto', 'padding': '15px'})
             ], className='module-card', style=self._get_card_style())
         ], style={'width': '60%', 'padding': '20px', 'flex': '1 1 auto'})
     
@@ -272,10 +350,24 @@ class StockStrategyApp:
         def update_stock_options(search_value):
             """根据搜索值动态更新股票选项"""
             if not search_value or len(search_value) < 1:
-                # 返回初始批次
                 return self.data_service.get_stock_list(limit=UI_CONFIG.DROPDOWN_BATCH_SIZE)
-            # 搜索匹配的股票
             return self.data_service.search_stocks(search_value)
+
+        @self.app.callback(
+            Output('chart-start-date', 'date'),
+            Output('chart-end-date', 'date'),
+            Input('stock-selector', 'value')
+        )
+        def update_chart_date_range(stock_code):
+            """选择股票后自动填充图表日期范围"""
+            if not stock_code:
+                raise PreventUpdate
+            stock_data = self.data_service.get_stock_data(stock_code)
+            if stock_data is None:
+                raise PreventUpdate
+            start = stock_data.start_date.strftime('%Y-%m-%d')
+            end = stock_data.end_date.strftime('%Y-%m-%d')
+            return start, end
 
         @self.app.callback(
             Output('price-chart', 'figure'),
@@ -289,14 +381,15 @@ class StockStrategyApp:
             State('stop-loss-threshold', 'value'),
             State('take-profit-threshold', 'value'),
             State('pullback-threshold', 'value'),
-            State('signal-window', 'value')
+            State('signal-window', 'value'),
+            State('chart-start-date', 'date'),
+            State('chart-end-date', 'date')
         )
         def update_analysis(n_clicks, stock_code, ma_short, ma_long,
                            volume_threshold, stop_loss, take_profit,
-                           pullback, signal_window):
+                           pullback, signal_window, chart_start_date, chart_end_date):
             """更新分析结果"""
             if n_clicks == 0 or not stock_code:
-                # 创建默认图表 - 显示"请选择股票"
                 import plotly.graph_objects as go
                 fig = go.Figure()
                 fig.add_annotation(
@@ -323,7 +416,6 @@ class StockStrategyApp:
                 return fig, default_msg, default_msg
             
             try:
-                # 更新策略配置
                 self.strategy_service.update_config(
                     ma_short=ma_short,
                     ma_long=ma_long,
@@ -334,25 +426,22 @@ class StockStrategyApp:
                     signal_window=signal_window
                 )
                 
-                # 加载股票数据（使用缓存，避免重复加载）
                 stock_data = self.data_service.get_stock_data(stock_code)
                 if stock_data is None:
                     return {}, html.Div("无法加载股票数据"), html.Div()
                 
-                # 执行策略分析
                 result = self.strategy_service.analyze(stock_data)
                 
-                # 生成图表
                 fig = self.chart_service.create_price_chart(
                     stock_data.df, 
                     result.signals,
-                    stock_data.stock_info.display_name
+                    stock_data.stock_info.display_name,
+                    start_date=chart_start_date,
+                    end_date=chart_end_date
                 )
                 
-                # 生成信号列表
                 table_div = self._create_signal_table(result.signals)
                 
-                # 生成统计信息
                 stats = self.chart_service.create_signal_summary(result)
                 stats_div = self._create_stats_div(stats)
                 
@@ -361,7 +450,240 @@ class StockStrategyApp:
             except Exception as e:
                 logger.error(f"分析失败: {e}")
                 return {}, html.Div(f"分析失败: {str(e)}"), html.Div()
-    
+
+        @self.app.callback(
+            Output('scan-state-store', 'data'),
+            Output('scan-poll-interval', 'disabled'),
+            Output('start-scan', 'style'),
+            Output('stop-scan', 'style'),
+            Output('scan-results', 'children'),
+            Output('scan-progress', 'children'),
+            Input('start-scan', 'n_clicks'),
+            State('scan-start-date', 'date'),
+            State('scan-end-date', 'date'),
+            prevent_initial_call=True
+        )
+        def start_signal_scan(n_clicks, start_date, end_date):
+            if not start_date or not end_date:
+                raise PreventUpdate
+
+            import threading
+            from services.signal_scanner import SignalScanner
+
+            self._scanner = SignalScanner()
+            self._scan_results = None
+            self._scan_running = True
+            self._scan_stopped = False
+            self._scan_progress_text = "正在扫描..."
+            self._scan_progress_current = 0
+            self._scan_progress_total = 0
+
+            def on_progress(current, total, code, name):
+                self._scan_progress_current = current
+                self._scan_progress_total = total
+
+            def scan_thread():
+                try:
+                    self._scan_results = self._scanner.scan_all_stocks(
+                        start_date, end_date, progress_callback=on_progress
+                    )
+                except Exception as e:
+                    logger.error(f"扫描出错: {e}")
+                    self._scan_results = []
+                finally:
+                    self._scan_running = False
+
+            thread = threading.Thread(target=scan_thread, daemon=True)
+            thread.start()
+
+            start_style = {'marginTop': '20px', 'width': '100%', 'display': 'none'}
+            stop_style = {'marginTop': '10px', 'width': '100%', 'display': 'block'}
+
+            loading_div = html.Div([
+                html.Div(style={
+                    'width': '40px', 'height': '40px',
+                    'border': '4px solid #2d3748',
+                    'borderTop': '4px solid #4a90e2',
+                    'borderRadius': '50%',
+                    'animation': 'spin 1s linear infinite',
+                    'margin': '20px auto'
+                }),
+                html.P("正在扫描中，请稍候...", style={'textAlign': 'center', 'color': '#a0aec0', 'fontSize': '14px'})
+            ])
+
+            return {'running': True}, False, start_style, stop_style, loading_div, "正在扫描..."
+
+        @self.app.callback(
+            Output('scan-results', 'children', allow_duplicate=True),
+            Output('scan-progress', 'children', allow_duplicate=True),
+            Output('scan-poll-interval', 'disabled', allow_duplicate=True),
+            Output('start-scan', 'style', allow_duplicate=True),
+            Output('stop-scan', 'style', allow_duplicate=True),
+            Input('scan-poll-interval', 'n_intervals'),
+            State('scan-state-store', 'data'),
+            prevent_initial_call=True
+        )
+        def poll_scan_results(n_intervals, store_data):
+            if not store_data or not store_data.get('running'):
+                raise PreventUpdate
+
+            if self._scan_running:
+                dots = '.' * ((n_intervals % 3) + 1)
+                current = self._scan_progress_current
+                total = self._scan_progress_total
+                pct = round(current / total * 100, 1) if total > 0 else 0
+
+                loading_div = html.Div([
+                    html.Div(style={
+                        'width': '40px', 'height': '40px',
+                        'border': '4px solid #2d3748',
+                        'borderTop': '4px solid #4a90e2',
+                        'borderRadius': '50%',
+                        'animation': 'spin 1s linear infinite',
+                        'margin': '20px auto'
+                    }),
+                    html.P(f"正在扫描中，请稍候{dots}", style={'textAlign': 'center', 'color': '#a0aec0', 'fontSize': '14px'}),
+                    html.Div(style={
+                        'width': '80%', 'height': '8px',
+                        'backgroundColor': '#2d3748',
+                        'borderRadius': '4px',
+                        'margin': '15px auto',
+                        'overflow': 'hidden'
+                    }, children=[
+                        html.Div(style={
+                            'width': f'{pct}%',
+                            'height': '100%',
+                            'backgroundColor': '#4a90e2',
+                            'borderRadius': '4px',
+                            'transition': 'width 0.3s ease'
+                        })
+                    ]),
+                    html.P(f"{current} / {total} ({pct}%)",
+                           style={'textAlign': 'center', 'color': '#718096', 'fontSize': '12px'})
+                ])
+                return loading_div, f"正在扫描... {current}/{total}", dash.no_update, dash.no_update, dash.no_update
+
+            results = self._scan_results or []
+            was_stopped = self._scan_stopped
+            self._scanner = None
+            self._scan_results = None
+            self._scan_stopped = False
+            self._last_scan_results = results
+
+            start_style = {'marginTop': '20px', 'width': '100%', 'display': 'block'}
+            stop_style = {'marginTop': '10px', 'width': '100%', 'display': 'none'}
+
+            if not results:
+                if was_stopped:
+                    msg = html.Div([
+                        html.P("⏹ 扫描已终止，未发现任何信号",
+                               style={'textAlign': 'center', 'color': '#f6ad55', 'padding': '20px', 'fontSize': '14px'})
+                    ])
+                    return msg, "扫描已终止（无信号）", True, start_style, stop_style
+                else:
+                    msg = html.Div([
+                        html.P("未发现任何信号",
+                               style={'textAlign': 'center', 'color': '#a0aec0', 'padding': '20px', 'fontSize': '14px'})
+                    ])
+                    return msg, "扫描完成（无信号）", True, start_style, stop_style
+
+            total_stocks = len(results)
+            total_signals = sum(r.total_signals for r in results)
+            buy_total = sum(r.buy_count for r in results)
+            add_total = sum(r.add_count for r in results)
+            exit_total = sum(r.exit_count for r in results)
+            profit_total = sum(r.profit_count for r in results)
+
+            status_color = '#f6ad55' if was_stopped else '#48bb78'
+            status_text = '⏹ 扫描已终止（部分结果）' if was_stopped else '✅ 扫描完成'
+
+            summary = html.Div([
+                html.Div([
+                    html.Span(status_text, style={'color': status_color, 'fontWeight': 'bold', 'fontSize': '14px', 'marginRight': '15px'}),
+                    html.Span(f"共 {total_stocks} 只股票触发信号", style={'color': '#4a90e2', 'fontWeight': 'bold', 'fontSize': '14px'}),
+                    html.Span(f" | 总信号数: {total_signals}", style={'color': '#a0aec0', 'fontSize': '13px', 'marginLeft': '15px'}),
+                    html.Span(f" | 买入: {buy_total}", style={'color': '#f56565', 'fontSize': '13px', 'marginLeft': '10px'}),
+                    html.Span(f" | 加码: {add_total}", style={'color': '#f6ad55', 'fontSize': '13px', 'marginLeft': '10px'}),
+                    html.Span(f" | 离场: {exit_total}", style={'color': '#48bb78', 'fontSize': '13px', 'marginLeft': '10px'}),
+                    html.Span(f" | 止盈: {profit_total}", style={'color': '#9f7aea', 'fontSize': '13px', 'marginLeft': '10px'}),
+                ], style={'marginBottom': '15px', 'paddingBottom': '10px', 'borderBottom': '1px solid #2d3748'})
+            ])
+
+            table_header = html.Div([
+                html.Div("股票代码", style={'flex': '1', 'fontWeight': 'bold', 'color': '#4a90e2', 'fontSize': '13px'}),
+                html.Div("股票名称", style={'flex': '1.5', 'fontWeight': 'bold', 'color': '#4a90e2', 'fontSize': '13px'}),
+                html.Div("买入", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#f56565', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("加码", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#f6ad55', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("离场", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#48bb78', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("止盈", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#9f7aea', 'fontSize': '13px', 'textAlign': 'center'}),
+                html.Div("总计", style={'flex': '0.6', 'fontWeight': 'bold', 'color': '#e0e0e0', 'fontSize': '13px', 'textAlign': 'center'}),
+            ], style={'display': 'flex', 'padding': '8px 0', 'borderBottom': '1px solid #2d3748', 'marginBottom': '5px'})
+
+            rows = []
+            for r in results:
+                bg = '#1e2d4a' if results.index(r) % 2 == 0 else 'transparent'
+                rows.append(html.Div([
+                    html.Div(r.stock_code, style={'flex': '1', 'fontSize': '12px', 'color': '#e0e0e0'}),
+                    html.Div(r.stock_name, style={'flex': '1.5', 'fontSize': '12px', 'color': '#a0aec0'}),
+                    html.Div(str(r.buy_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#f56565', 'textAlign': 'center'}),
+                    html.Div(str(r.add_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#f6ad55', 'textAlign': 'center'}),
+                    html.Div(str(r.exit_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#48bb78', 'textAlign': 'center'}),
+                    html.Div(str(r.profit_count), style={'flex': '0.6', 'fontSize': '12px', 'color': '#9f7aea', 'textAlign': 'center'}),
+                    html.Div(str(r.total_signals), style={'flex': '0.6', 'fontSize': '12px', 'color': '#e0e0e0', 'textAlign': 'center', 'fontWeight': 'bold'}),
+                ], style={'display': 'flex', 'padding': '6px 0', 'backgroundColor': bg, 'borderRadius': '4px'}))
+
+            progress_text = "扫描已终止（部分结果）" if was_stopped else "扫描完成"
+
+            export_btn = html.Button('📥 导出CSV', id='export-scan-csv', n_clicks=0,
+                                     style={
+                                         'marginTop': '10px', 'padding': '8px 20px',
+                                         'backgroundColor': '#48bb78', 'color': '#fff',
+                                         'border': 'none', 'borderRadius': '4px',
+                                         'cursor': 'pointer', 'fontSize': '13px',
+                                         'fontWeight': 'bold'
+                                     })
+
+            return html.Div([summary, export_btn, table_header] + rows), progress_text, True, start_style, stop_style
+
+        @self.app.callback(
+            Output('scan-state-store', 'data', allow_duplicate=True),
+            Input('stop-scan', 'n_clicks'),
+            prevent_initial_call=True
+        )
+        def stop_signal_scan(n_clicks):
+            if self._scanner:
+                self._scanner.request_stop()
+                self._scan_stopped = True
+                self._scan_running = False
+            return {'running': False}
+
+        @self.app.callback(
+            Output('download-scan-csv', 'data'),
+            Input('export-scan-csv', 'n_clicks'),
+            prevent_initial_call=True
+        )
+        def export_scan_csv(n_clicks):
+            if not self._last_scan_results:
+                raise PreventUpdate
+
+            import pandas as pd
+            from io import StringIO
+
+            rows = []
+            for r in self._last_scan_results:
+                rows.append({
+                    '股票代码': r.stock_code,
+                    '股票名称': r.stock_name,
+                    '买入信号': r.buy_count,
+                    '加码信号': r.add_count,
+                    '离场信号': r.exit_count,
+                    '止盈信号': r.profit_count,
+                    '总信号数': r.total_signals
+                })
+
+            df = pd.DataFrame(rows)
+            return dcc.send_data_frame(df.to_csv, "scan_results.csv", index=False, encoding='utf-8-sig')
+
     def _create_stats_div(self, stats: Dict) -> html.Div:
         """创建统计信息组件"""
         return html.Div([
