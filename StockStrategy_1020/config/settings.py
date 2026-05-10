@@ -24,6 +24,7 @@ class TradingConfig:
     VOLUME_SHRINK_THRESHOLD: float = -0.20  # 缩量阈值 -20%
     STOP_LOSS_THRESHOLD: float = 0.05   # 止损阈值 5%
     TAKE_PROFIT_THRESHOLD: float = 0.05 # 止盈阈值 5%
+    BREAKDOWN_THRESHOLD: float = 0.02   # 破位阈值 2%
     PULLBACK_THRESHOLD: float = 0.02    # 回踩阈值 2%
     STAND_THRESHOLD: float = 0.02       # 站上阈值 2%
     
@@ -41,6 +42,7 @@ class TradingConfig:
             'volume_shrink_threshold': self.VOLUME_SHRINK_THRESHOLD,
             'stop_loss_threshold': self.STOP_LOSS_THRESHOLD,
             'take_profit_threshold': self.TAKE_PROFIT_THRESHOLD,
+            'breakdown_threshold': self.BREAKDOWN_THRESHOLD,
             'pullback_threshold': self.PULLBACK_THRESHOLD,
             'stand_threshold': self.STAND_THRESHOLD,
             'signal_window': self.SIGNAL_WINDOW,
@@ -64,6 +66,7 @@ class TradingConfig:
             VOLUME_SHRINK_THRESHOLD=data.get('volume_shrink_threshold', -0.20),
             STOP_LOSS_THRESHOLD=data.get('stop_loss_threshold', 0.05),
             TAKE_PROFIT_THRESHOLD=data.get('take_profit_threshold', 0.05),
+            BREAKDOWN_THRESHOLD=data.get('breakdown_threshold', 0.02),
             PULLBACK_THRESHOLD=data.get('pullback_threshold', 0.02),
             STAND_THRESHOLD=data.get('stand_threshold', 0.02),
             SIGNAL_WINDOW=data.get('signal_window', 10),

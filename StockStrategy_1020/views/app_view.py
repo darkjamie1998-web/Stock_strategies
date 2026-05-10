@@ -167,6 +167,7 @@ class StockStrategyApp:
             ('ma-long', '长期均线（生命线）', TRADING_CONFIG.MA_LONG, 10, 60),
             ('volume-threshold', '放量阈值（%）', int(TRADING_CONFIG.VOLUME_THRESHOLD * 100), 5, 100),
             ('stop-loss-threshold', '止损阈值（%）', int(TRADING_CONFIG.STOP_LOSS_THRESHOLD * 100), 1, 20),
+            ('breakdown-threshold', '破位阈值（%）', int(TRADING_CONFIG.BREAKDOWN_THRESHOLD * 100), 1, 10),
             ('take-profit-threshold', '止盈阈值（%）', int(TRADING_CONFIG.TAKE_PROFIT_THRESHOLD * 100), 1, 50),
             ('pullback-threshold', '回踩/站上阈值（%）', int(TRADING_CONFIG.PULLBACK_THRESHOLD * 100), 1, 10),
             ('signal-window', '信号屏蔽窗口（天）', TRADING_CONFIG.SIGNAL_WINDOW, 1, 30),
@@ -226,7 +227,7 @@ class StockStrategyApp:
                 html.P("🟢 龙战于野（离场）", style={'color': '#48bb78', 'fontSize': '14px', 'marginBottom': '5px', 'fontWeight': 'bold'}),
                 html.P("满足以下任一条件触发：", style={'color': '#a0aec0', 'fontSize': '12px', 'marginBottom': '5px'}),
                 html.P("条件1：连续2个交易日收盘价低于20日均线", style={'color': '#a0aec0', 'fontSize': '11px', 'marginBottom': '3px', 'marginLeft': '15px'}),
-                html.P("条件2：单日跌幅超过止损阈值并有效破位（收盘价低于20日均线止损阈值以上）", style={'color': '#a0aec0', 'fontSize': '11px', 'marginBottom': '10px', 'marginLeft': '15px'}),
+                html.P("条件2：单日跌幅超过止损阈值并有效破位（收盘价低于20日均线破位阈值以上）", style={'color': '#a0aec0', 'fontSize': '11px', 'marginBottom': '10px', 'marginLeft': '15px'}),
 
                 html.P("🟣 收获果实（止盈）", style={'color': '#9f7aea', 'fontSize': '14px', 'marginBottom': '5px', 'fontWeight': 'bold'}),
                 html.P("当日收盘价较买入或加码信号涨幅超过止盈阈值", style={'color': '#a0aec0', 'fontSize': '12px', 'marginBottom': '10px'}),
@@ -379,6 +380,7 @@ class StockStrategyApp:
             State('ma-long', 'value'),
             State('volume-threshold', 'value'),
             State('stop-loss-threshold', 'value'),
+            State('breakdown-threshold', 'value'),
             State('take-profit-threshold', 'value'),
             State('pullback-threshold', 'value'),
             State('signal-window', 'value'),
@@ -386,7 +388,7 @@ class StockStrategyApp:
             State('chart-end-date', 'date')
         )
         def update_analysis(n_clicks, stock_code, ma_short, ma_long,
-                           volume_threshold, stop_loss, take_profit,
+                           volume_threshold, stop_loss, breakdown, take_profit,
                            pullback, signal_window, chart_start_date, chart_end_date):
             """更新分析结果"""
             if n_clicks == 0 or not stock_code:
@@ -421,6 +423,7 @@ class StockStrategyApp:
                     ma_long=ma_long,
                     volume_threshold=volume_threshold / 100,
                     stop_loss_threshold=stop_loss / 100,
+                    breakdown_threshold=breakdown / 100,
                     take_profit_threshold=take_profit / 100,
                     pullback_threshold=pullback / 100,
                     signal_window=signal_window

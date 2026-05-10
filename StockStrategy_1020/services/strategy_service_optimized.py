@@ -278,7 +278,7 @@ class OptimizedStrategyService(BaseStrategy):
         elif last_buy_price > 0:
             change_pct = (current['close'] - last_buy_price) / last_buy_price
             if change_pct < -self.config.STOP_LOSS_THRESHOLD:
-                effective_break = current['close'] < current['ma20'] * (1 - self.config.STAND_THRESHOLD)
+                effective_break = current['close'] < current['ma20'] * (1 - self.config.BREAKDOWN_THRESHOLD)
                 if effective_break:
                     conditions = [
                         f"跌幅{change_pct:.2%}超过止损阈值",

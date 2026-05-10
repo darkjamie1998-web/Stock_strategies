@@ -361,10 +361,10 @@ class StrategyService:
             if condition_id == 0 and last_buy_price > 0:
                 change_pct = (close - last_buy_price) / last_buy_price
                 if change_pct < -self.config.STOP_LOSS_THRESHOLD:
-                    effective_break = close < ma20 * (1 - self.config.STAND_THRESHOLD)
+                    effective_break = close < ma20 * (1 - self.config.BREAKDOWN_THRESHOLD)
                     if effective_break:
                         conditions.append(f"跌幅{change_pct:.2%}超过止损阈值{self.config.STOP_LOSS_THRESHOLD:.0%}")
-                        conditions.append(f"有效破位: {close:.2f} < {ma20 * (1 - self.config.STAND_THRESHOLD):.2f}")
+                        conditions.append(f"有效破位: {close:.2f} < {ma20 * (1 - self.config.BREAKDOWN_THRESHOLD):.2f}")
                         condition_id = 2
             
             if condition_id > 0:

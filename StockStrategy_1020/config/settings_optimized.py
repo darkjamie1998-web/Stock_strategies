@@ -30,6 +30,7 @@ class TradingConfig:
     VOLUME_SHRINK_THRESHOLD: float = -0.20
     STOP_LOSS_THRESHOLD: float = 0.05
     TAKE_PROFIT_THRESHOLD: float = 0.05
+    BREAKDOWN_THRESHOLD: float = 0.02
     PULLBACK_THRESHOLD: float = 0.02
     STAND_THRESHOLD: float = 0.02
     SIGNAL_WINDOW: int = 10
@@ -81,6 +82,7 @@ class TradingConfig:
             VOLUME_SHRINK_THRESHOLD=data.get('volume_shrink_threshold', -0.20),
             STOP_LOSS_THRESHOLD=data.get('stop_loss_threshold', 0.05),
             TAKE_PROFIT_THRESHOLD=data.get('take_profit_threshold', 0.05),
+            BREAKDOWN_THRESHOLD=data.get('breakdown_threshold', 0.02),
             PULLBACK_THRESHOLD=data.get('pullback_threshold', 0.02),
             STAND_THRESHOLD=data.get('stand_threshold', 0.02),
             SIGNAL_WINDOW=data.get('signal_window', 10),
